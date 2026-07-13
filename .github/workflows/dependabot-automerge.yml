@@ -1,0 +1,144 @@
+name: Dependabot Auto-Merge
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+      - labeled
+  pull_request_review:
+    types:
+      - submitted
+  check_suite:
+    types:
+      - completed
+  workflow_run:
+    workflows:
+      - PR Checks
+    types:
+      - completed
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: ${{ github.repository }}-automerge-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  automerge:
+    if: github.event.pull_request.user.login == 'dependabot[bot]' || github.event.pull_request.user.login == 'dependabot'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.7
+
+      - name: Ensure dependencies label only
+        uses: actions/github-script@v7.0.1
+        with:
+          script: |
+            const { owner, repo, number } = context.issue;
+            const labels = context.payload.pull_request?.labels || [];
+            const labelNames = labels.map(l => l.name);
+
+            // Check if it has the dependencies label
+            if (!labelNames.includes('dependencies')) {
+              console.log('PR does not have the "dependencies" label. Skipping automerge.');
+              process.exit(0);
+            }
+
+            // Remove any other labels
+            const otherLabels = labelNames.filter(l => l !== 'dependencies');
+            for (const label of otherLabels) {
+              console.log(`Removing label: ${label}`);
+              await github.rest.issues.removeLabel({
+                owner,
+                repo,
+                issue_number: number,
+                name: label
+              });
+            }
+
+      - name: Get PR details
+        id: pr
+        uses: actions/github-script@v7.0.1
+        with:
+          script: |
+            const { owner, repo, number } = context.issue;
+            const pr = await github.rest.pulls.get({
+              owner,
+              repo,
+              pull_number: number
+            });
+
+            // Extract version numbers from PR title (e.g., "Bump package from 1.0.0 to 2.0.0")
+            const titleMatch = pr.data.title.match(/from\s+([^\s]+)\s+to\s+([^\s]+)/i);
+            let isMajor = false;
+            let isMinor = false;
+
+            if (titleMatch) {
+              const fromVersion = titleMatch[1];
+              const toVersion = titleMatch[2];
+
+              // Parse semantic versions
+              const versionRegex = /^v?(\d+)\.(\d+)\.(\d+)/;
+              const fromMatch = fromVersion.match(versionRegex);
+              const toMatch = toVersion.match(versionRegex);
+
+              if (fromMatch && toMatch) {
+                const [, fromMajor, fromMinor, fromPatch] = fromMatch;
+                const [, toMajor, toMinor, toPatch] = toMatch;
+
+                if (fromMajor !== toMajor) {
+                  isMajor = true;
+                  console.log(`Major version change: ${fromVersion} -> ${toVersion}`);
+                } else if (fromMinor !== toMinor) {
+                  isMinor = true;
+                  console.log(`Minor version change: ${fromVersion} -> ${toVersion}`);
+                } else {
+                  console.log(`Patch version change: ${fromVersion} -> ${toVersion}`);
+                }
+              }
+            }
+
+            // Check if all required checks have passed
+            const statuses = await github.rest.repos.getCombinedStatusForRef({
+              owner,
+              repo,
+              ref: pr.data.head.sha
+            });
+
+            core.setOutput('state', statuses.data.state);
+            core.setOutput('is_major', isMajor.toString());
+            core.setOutput('is_minor', isMinor.toString());
+            core.setOutput('is_draft', pr.data.draft.toString());
+
+      - name: Auto-merge if conditions are met
+        if: steps.pr.outputs.state == 'success' && steps.pr.outputs.is_draft == 'false' && steps.pr.outputs.is_major == 'false'
+        uses: actions/github-script@v7.0.1
+        with:
+          script: |
+            const { owner, repo, number } = context.issue;
+
+            try {
+              const result = await github.rest.pulls.merge({
+                owner,
+                repo,
+                pull_number: number,
+                merge_method: 'squash'
+              });
+              console.log('✅ PR auto-merged successfully');
+            } catch (error) {
+              if (error.status === 405) {
+                console.log('⏳ Merge not ready yet (still waiting for checks or branch protection)');
+              } else {
+                console.error('❌ Failed to merge:', error.message);
+              }
+            }
