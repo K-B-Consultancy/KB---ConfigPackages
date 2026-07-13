@@ -12,6 +12,8 @@ export default [
     // paths for .prettierignore; the ESLint side ships here so clients don't repeat it)
     ignores: [
       "**/dist/",
+      "**/build/",
+      "**/.output/",
       "**/coverage/",
       "**/src/generated/",
       "**/routeTree.gen.ts",
@@ -19,11 +21,12 @@ export default [
     ]
   },
   ...tseslint.configs.recommended,
+  // a11y strict is the mechanical form of react-base RULES.md § Accessibility
+  jsxA11y.flatConfigs.strict,
   {
     plugins: {
       "react-hooks": reactHooks,
       import: importPlugin,
-      "jsx-a11y": jsxA11y,
       local: {
         rules: {
           "no-direct-query-in-components": noDirectQueryInComponents,
@@ -34,7 +37,6 @@ export default [
     rules: {
       ...reactHooks.configs.recommended.rules,
       ...importPlugin.configs.recommended.rules,
-      ...jsxA11y.configs.recommended.rules,
       "local/no-direct-query-in-components": "error",
       "local/allow-underscore-type-only-imports": "error",
       // tsc owns module resolution (typecheck is a required CI gate in every client);
@@ -49,7 +51,57 @@ export default [
           varsIgnorePattern: "^_[A-Za-z0-9].*",
           caughtErrorsIgnorePattern: "^_[A-Za-z0-9].*"
         }
+      ],
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-non-null-assertion": "error",
+      "@typescript-eslint/consistent-type-imports": "error",
+      // Output belongs in the monitoring logger (react-base RULES.md § Monitoring)
+      "no-console": "error",
+      "import/no-default-export": "error",
+      "import/order": [
+        "error",
+        {
+          groups: ["builtin", "external", "internal", ["parent", "sibling", "index"]],
+          pathGroups: [{ pattern: "@/**", group: "internal" }],
+          "newlines-between": "always",
+          alphabetize: { order: "asc", caseInsensitive: true }
+        }
+      ],
+      // Feature isolation: cross-feature imports go through the feature's
+      // public API (features/<name>/index.ts), never its internals
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/features/*/*"],
+              message:
+                "Import from the feature's public API (@/features/<name>) instead of reaching into its internals."
+            }
+          ]
+        }
       ]
+    }
+  },
+  {
+    // Component files ≤ 200 lines — split components, don't restructure to dodge the cap
+    files: ["**/*.tsx"],
+    rules: {
+      "max-lines": ["error", { max: 200, skipBlankLines: true, skipComments: true }]
+    }
+  },
+  {
+    // Hook files ≤ 100 lines (use[A-Z] so api modules like users.ts don't match)
+    files: ["**/use[A-Z]*.ts"],
+    rules: {
+      "max-lines": ["error", { max: 100, skipBlankLines: true, skipComments: true }]
+    }
+  },
+  {
+    // Config files are consumed by tools that expect a default export
+    files: ["**/*.config.{ts,js,mjs,cjs}", "**/vite.config.ts", "**/playwright.config.ts"],
+    rules: {
+      "import/no-default-export": "off"
     }
   },
   eslintConfigPrettier
