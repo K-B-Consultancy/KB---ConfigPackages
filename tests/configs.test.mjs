@@ -30,7 +30,7 @@ test("eslint config leaves module resolution to tsc", () => {
 
 test("prettier config matches expected core options", () => {
   assert.equal(prettierConfig.printWidth, 100);
-  assert.equal(prettierConfig.singleQuote, false);
+  assert.equal(prettierConfig.singleQuote, true);
   assert.equal(prettierConfig.arrowParens, "always");
 });
 
