@@ -1,0 +1,35 @@
+{
+  "name": "@kb-consultancy/eslint-config",
+  "version": "1.0.0",
+  "private": false,
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./local-rules/no-direct-query-in-components": "./src/local-rules/no-direct-query-in-components.js",
+    "./local-rules/allow-underscore-type-only-imports": "./src/local-rules/allow-underscore-type-only-imports.js"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "build": "echo 'No build step required'",
+    "test": "node --test"
+  },
+  "peerDependencies": {
+    "eslint": ">=9.0.0",
+    "typescript-eslint": ">=8.0.0",
+    "eslint-plugin-react-hooks": ">=5.0.0",
+    "eslint-plugin-import": ">=2.0.0",
+    "eslint-plugin-jsx-a11y": ">=6.0.0",
+    "eslint-config-prettier": ">=10.0.0"
+  },
+  "devDependencies": {
+    "eslint": "9.31.0",
+    "typescript-eslint": "8.37.0",
+    "eslint-plugin-react-hooks": "5.2.0",
+    "eslint-plugin-import": "2.32.0",
+    "eslint-plugin-jsx-a11y": "6.10.2",
+    "eslint-config-prettier": "10.1.8"
+  }
+}

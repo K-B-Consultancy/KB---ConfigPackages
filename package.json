@@ -1,0 +1,25 @@
+{
+  "name": "@kb-consultancy/config-packages",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "packageManager": "pnpm@11.5.2",
+  "engines": {
+    "node": ">=24"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "lint": "eslint .",
+    "format": "prettier . --write",
+    "test": "node --test",
+    "build": "pnpm -r --if-present build"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.31.0",
+    "eslint": "9.31.0",
+    "prettier": "3.6.2",
+    "typescript": "5.8.3"
+  }
+}
