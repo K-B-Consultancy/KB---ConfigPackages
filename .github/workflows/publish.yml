@@ -32,6 +32,21 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # Packages are versioned in lockstep with the root package.json. A release
+      # whose tag doesn't match would publish artifacts that can't be traced back
+      # to it — fail before publishing anything.
+      - name: Verify release tag matches package versions
+        if: github.event_name == 'release'
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          for f in package.json packages/*/package.json; do
+            V="$(node -p "require('./$f').version")"
+            if [ "$V" != "$TAG" ]; then
+              echo "::error file=$f::version $V does not match release tag $TAG"
+              exit 1
+            fi
+          done
+
       - name: Verify
         run: pnpm lint && pnpm test && pnpm build
 
