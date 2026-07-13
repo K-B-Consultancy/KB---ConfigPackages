@@ -28,9 +28,26 @@ test("eslint config leaves module resolution to tsc", () => {
   assert.equal(ruleBlock.rules["import/named"], "off");
 });
 
+test("eslint config carries the full org rule set from react-base RULES.md", () => {
+  const allRules = Object.assign({}, ...eslintConfig.map((entry) => entry.rules ?? {}));
+  for (const rule of [
+    "import/order",
+    "import/no-default-export",
+    "no-console",
+    "no-restricted-imports",
+    "max-lines",
+    "@typescript-eslint/no-explicit-any",
+    "@typescript-eslint/no-non-null-assertion",
+    "@typescript-eslint/consistent-type-imports",
+    "local/no-direct-query-in-components"
+  ]) {
+    assert.ok(rule in allRules, `expected rule ${rule} in shared config`);
+  }
+});
+
 test("prettier config matches expected core options", () => {
   assert.equal(prettierConfig.printWidth, 100);
-  assert.equal(prettierConfig.singleQuote, false);
+  assert.equal(prettierConfig.singleQuote, true);
   assert.equal(prettierConfig.arrowParens, "always");
 });
 

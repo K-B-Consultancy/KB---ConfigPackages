@@ -45,7 +45,11 @@ export { default } from "@k-b-consultancy/prettier-config";
 
 ## Release and publishing
 
-Create a GitHub release (or use workflow dispatch) to publish all packages to GitHub Packages.
+All packages are versioned in **lockstep** with the root `package.json` — a change to any package bumps every `version` field (root + all four packages) in the same PR.
+
+1. Bump the versions in your PR and merge to `main`.
+2. Release Drafter maintains a draft release named `v<version>` taken from the root `package.json`.
+3. Publish the release. `publish.yml` verifies the tag matches every `package.json` version (it fails the publish otherwise), then publishes all packages to GitHub Packages. Already-published versions are skipped, so re-runs are safe.
 
 ## Migration from KB-Documentation
 
