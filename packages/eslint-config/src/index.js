@@ -1,6 +1,6 @@
 import tseslint from "typescript-eslint";
 import reactHooks from "eslint-plugin-react-hooks";
-import importPlugin from "eslint-plugin-import";
+import importX from "eslint-plugin-import-x";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import eslintConfigPrettier from "eslint-config-prettier";
 import noDirectQueryInComponents from "./local-rules/no-direct-query-in-components.js";
@@ -26,7 +26,7 @@ export default [
   {
     plugins: {
       "react-hooks": reactHooks,
-      import: importPlugin,
+      "import-x": importX,
       local: {
         rules: {
           "no-direct-query-in-components": noDirectQueryInComponents,
@@ -36,14 +36,14 @@ export default [
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      ...importPlugin.configs.recommended.rules,
+      ...importX.flatConfigs.recommended.rules,
       "local/no-direct-query-in-components": "error",
       "local/allow-underscore-type-only-imports": "error",
       // tsc owns module resolution (typecheck is a required CI gate in every client);
       // these two need a filesystem resolver that can't see TS paths without an extra
       // native dependency, and only produce false positives in TS projects
-      "import/no-unresolved": "off",
-      "import/named": "off",
+      "import-x/no-unresolved": "off",
+      "import-x/named": "off",
       "@typescript-eslint/no-unused-vars": [
         "error",
         {
@@ -57,8 +57,10 @@ export default [
       "@typescript-eslint/consistent-type-imports": "error",
       // Output belongs in the monitoring logger (react-base RULES.md § Monitoring)
       "no-console": "error",
-      "import/no-default-export": "error",
-      "import/order": [
+      // Same intent as import/no-default-export, but via the ESLint core rule —
+      // the plugin rule reads context.parserOptions, which ESLint 10 removed
+      "no-restricted-exports": ["error", { restrictDefaultExports: { direct: true } }],
+      "import-x/order": [
         "error",
         {
           groups: ["builtin", "external", "internal", ["parent", "sibling", "index"]],
@@ -101,7 +103,7 @@ export default [
     // Config files are consumed by tools that expect a default export
     files: ["**/*.config.{ts,js,mjs,cjs}", "**/vite.config.ts", "**/playwright.config.ts"],
     rules: {
-      "import/no-default-export": "off"
+      "no-restricted-exports": "off"
     }
   },
   eslintConfigPrettier

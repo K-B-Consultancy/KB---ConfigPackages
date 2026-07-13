@@ -4,6 +4,8 @@ import fs from "node:fs/promises";
 import { URL } from "node:url";
 
 import eslintConfig from "../packages/eslint-config/src/index.js";
+import eslintConfigNextjs from "../packages/eslint-config/src/nextjs.js";
+import eslintConfigTanstackStart from "../packages/eslint-config/src/tanstack-start.js";
 import prettierConfig from "../packages/prettier-config/index.js";
 import stylelintConfig from "../packages/stylelint-config/index.js";
 
@@ -23,16 +25,16 @@ test("eslint config ships global ignores for generated output", () => {
 });
 
 test("eslint config leaves module resolution to tsc", () => {
-  const ruleBlock = eslintConfig.find((entry) => entry.rules?.["import/no-unresolved"]);
-  assert.equal(ruleBlock.rules["import/no-unresolved"], "off");
-  assert.equal(ruleBlock.rules["import/named"], "off");
+  const ruleBlock = eslintConfig.find((entry) => entry.rules?.["import-x/no-unresolved"]);
+  assert.equal(ruleBlock.rules["import-x/no-unresolved"], "off");
+  assert.equal(ruleBlock.rules["import-x/named"], "off");
 });
 
 test("eslint config carries the full org rule set from react-base RULES.md", () => {
   const allRules = Object.assign({}, ...eslintConfig.map((entry) => entry.rules ?? {}));
   for (const rule of [
-    "import/order",
-    "import/no-default-export",
+    "import-x/order",
+    "no-restricted-exports",
     "no-console",
     "no-restricted-imports",
     "max-lines",
@@ -43,6 +45,23 @@ test("eslint config carries the full org rule set from react-base RULES.md", () 
   ]) {
     assert.ok(rule in allRules, `expected rule ${rule} in shared config`);
   }
+});
+
+test("stack flavors extend the base config", () => {
+  for (const flavor of [eslintConfigNextjs, eslintConfigTanstackStart]) {
+    assert.ok(Array.isArray(flavor));
+    assert.ok(flavor.length > eslintConfig.length, "flavor adds entries on top of base");
+  }
+
+  const nextFrameworkBlock = eslintConfigNextjs.find(
+    (entry) => entry.files && entry.rules?.["no-restricted-exports"] === "off"
+  );
+  assert.ok(nextFrameworkBlock, "nextjs flavor re-enables default exports for framework files");
+
+  const refreshBlock = eslintConfigTanstackStart.find(
+    (entry) => entry.rules?.["react-refresh/only-export-components"]
+  );
+  assert.ok(refreshBlock, "tanstack-start flavor wires react-refresh");
 });
 
 test("prettier config matches expected core options", () => {
