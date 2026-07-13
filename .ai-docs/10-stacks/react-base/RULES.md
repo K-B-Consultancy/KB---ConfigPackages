@@ -29,7 +29,8 @@ The `@/*` alias maps to `src/*`. For Vite apps, `vite-tsconfig-paths` picks this
 
 **Hard rules:**
 
-- **No `any`, no non-null assertions, type-only imports** — enforced by the base config; when blocked, use `unknown` and narrow or handle null explicitly, never a disable comment.
+- **No `any`, no non-null assertions, no type-only imports** — enforced by the base config; when blocked, use `unknown` and narrow or handle null explicitly, never a disable comment.
+  - **Exception:** Variables matching the pattern `_<identifier>` (e.g., `_o`, `_Model`) are allowed as a convention for type-only imports without the `import type` keyword. The leading underscore signals intent. ESLint's unused-variable rule ignores these.
 - **No other `as` type assertions either**, including narrowing a generated union type (e.g. `value as EntityType`). A type assertion tells the compiler to trust code that may be wrong. Instead:
 - Type local state (`useState`, filters, form fields) with the generated union itself (e.g. `EntityType | 'all'`), so equality checks against a literal (`!== 'all'`) narrow the type for free.
 - When a value crosses a boundary that only knows `string` (e.g. a third-party `Select`'s `onValueChange`), validate it with a type predicate (`value is EntityType`) instead of casting it.
@@ -436,37 +437,37 @@ Whether the tests hit a real backend or the typed mock client is org policy — 
 
 ESLint and Prettier are the **CLI-first** quality gates for TS/React (see [`CODE_QUALITY.md`](../../00-org-wide/CODE_QUALITY.md) for the org-wide policy).
 
-**The org rule set is code, not prose.** It ships as real config files in `.ai-docs/config/` and is updated in every client via the docs sync — a client repo never hand-writes it, and a new rule is added in KB-Documentation, not per project (org policy: [`CODE_QUALITY.md`](../../00-org-wide/CODE_QUALITY.md)).
+**The org rule set is code, not prose.** It ships as npm packages published and updated centrally — a client repo never hand-writes it, and a new rule is added in the [`KB---ConfigPackages`](https://github.com/K-B-Consultancy/KB---ConfigPackages) repo, not per project (org policy: [`CODE_QUALITY.md`](../../00-org-wide/CODE_QUALITY.md)).
 
 ### ESLint
 
-The monorepo-root `eslint.config.js` imports the synced base and appends app-specific overrides only:
+Install `@kb-consultancy/eslint-config` from GitHub Packages at the monorepo root, then extend it in the root `eslint.config.js`:
 
 ```javascript
-import kbBase from "./.ai-docs/config/eslint.config.base.js";
+import kbBase from "@kb-consultancy/eslint-config";
 
 export default [...kbBase /*, app-specific overrides last */];
 ```
 
-The rule set itself lives in [`.ai-docs/config/eslint.config.base.js`](../../config/eslint.config.base.js) — read it there; this file does not restate it. Intent notes the config can't carry:
+The rule set itself lives in [`@kb-consultancy/eslint-config`](https://github.com/K-B-Consultancy/KB---ConfigPackages) — see the package source; this file does not restate it. Intent notes the config can't carry:
 
 - `no-console` exists because output belongs in the monitoring logger
 - `max-lines` (200 for `.tsx`, 100 for `use[A-Z]*.ts` hooks) exists to force splitting components and extracting hooks, not restructuring to dodge the cap
 - `no-restricted-imports` is the mechanical form of feature isolation ([Folder structure](#folder-structure-features-based))
-- `local/no-direct-query-in-components` (canonical implementation: [`.ai-docs/config/eslint-local-rules/no-direct-query-in-components.js`](../../config/eslint-local-rules/no-direct-query-in-components.js)) is the mechanical form of "hooks own all data-fetching" ([Hooks](#hooks))
+- `local/no-direct-query-in-components` (the custom rule in `@kb-consultancy/eslint-config`) is the mechanical form of "hooks own all data-fetching" ([Hooks](#hooks))
 - `jsx-a11y` strict is the mechanical form of [Accessibility](#accessibility)
 - `import/no-default-export` — Next.js apps re-enable default exports for framework files only, as an app-specific override (see [`nextjs/RULES.md`](../nextjs/RULES.md))
 
-Required devDependencies are listed in the base config's header — install them at the monorepo root, exact-pinned.
+Required devDependencies are listed in the package — install them at the monorepo root, exact-pinned.
 
-CI runs `eslint --max-warnings 0` and fails if `eslint.config.js` doesn't import the synced base (guard step in the `pr-checks.yml` template). Pre-commit hook runs ESLint on staged files only.
+CI runs `eslint --max-warnings 0` and fails if `eslint.config.js` doesn't extend the base config (guard step in the `pr-checks.yml` template). Pre-commit hook runs ESLint on staged files only.
 
 ### Prettier
 
-The monorepo-root `prettier.config.js` re-exports the synced config ([`.ai-docs/config/prettier.config.js`](../../config/prettier.config.js)):
+Install `@kb-consultancy/prettier-config` from GitHub Packages at the monorepo root, then re-export it in the root `prettier.config.js`:
 
 ```javascript
-export { default } from "./.ai-docs/config/prettier.config.js";
+export { default } from "@kb-consultancy/prettier-config";
 ```
 
 Editors format-on-save. CI runs `prettier --check`. Stylelint (CSS outside Tailwind) is cross-stack tooling — see [`CODE_QUALITY.md`](../../00-org-wide/CODE_QUALITY.md).
