@@ -1,13 +1,15 @@
 {
   "name": "@k-b-consultancy/eslint-config",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": false,
   "type": "module",
   "main": "src/index.js",
   "exports": {
     ".": "./src/index.js",
     "./local-rules/no-direct-query-in-components": "./src/local-rules/no-direct-query-in-components.js",
-    "./local-rules/allow-underscore-type-only-imports": "./src/local-rules/allow-underscore-type-only-imports.js"
+    "./local-rules/allow-underscore-type-only-imports": "./src/local-rules/allow-underscore-type-only-imports.js",
+    "./nextjs": "./src/nextjs.js",
+    "./tanstack-start": "./src/tanstack-start.js"
   },
   "files": [
     "src"
@@ -20,16 +22,23 @@
     "eslint": ">=9.0.0",
     "typescript-eslint": ">=8.0.0",
     "eslint-plugin-react-hooks": ">=5.0.0",
-    "eslint-plugin-import": ">=2.0.0",
     "eslint-plugin-jsx-a11y": ">=6.0.0",
-    "eslint-config-prettier": ">=10.0.0"
+    "eslint-config-prettier": ">=10.0.0",
+    "eslint-plugin-import-x": ">=4.0.0",
+    "eslint-plugin-react-refresh": ">=0.4.0"
   },
   "devDependencies": {
     "eslint": "9.31.0",
     "typescript-eslint": "8.63.0",
     "eslint-plugin-react-hooks": "7.1.1",
-    "eslint-plugin-import": "2.32.0",
     "eslint-plugin-jsx-a11y": "6.10.2",
-    "eslint-config-prettier": "10.1.8"
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-import-x": "4.17.1",
+    "eslint-plugin-react-refresh": "0.5.3"
+  },
+  "peerDependenciesMeta": {
+    "eslint-plugin-react-refresh": {
+      "optional": true
+    }
   }
 }

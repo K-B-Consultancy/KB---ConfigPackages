@@ -1,7 +1,7 @@
 {
   "name": "@k-b-consultancy/config-packages",
   "private": true,
-  "version": "1.2.0",
+  "version": "1.2.1",
   "type": "module",
   "packageManager": "pnpm@11.5.2",
   "engines": {
