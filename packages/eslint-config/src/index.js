@@ -60,12 +60,13 @@ export default [
       // Same intent as import/no-default-export, but via the ESLint core rule —
       // the plugin rule reads context.parserOptions, which ESLint 10 removed
       "no-restricted-exports": ["error", { restrictDefaultExports: { direct: true } }],
+      // One bucket, purely alphabetical — no group separation or blank lines.
+      // Side-effect-only imports (import "./x.css") are never reordered by this rule.
       "import-x/order": [
         "error",
         {
-          groups: ["builtin", "external", "internal", ["parent", "sibling", "index"]],
-          pathGroups: [{ pattern: "@/**", group: "internal" }],
-          "newlines-between": "always",
+          groups: [["builtin", "external", "internal", "parent", "sibling", "index", "object", "unknown"]],
+          "newlines-between": "never",
           alphabetize: { order: "asc", caseInsensitive: true }
         }
       ],
