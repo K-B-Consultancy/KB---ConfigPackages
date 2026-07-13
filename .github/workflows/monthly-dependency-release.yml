@@ -1,0 +1,197 @@
+name: Monthly Dependency Release
+
+on:
+  schedule:
+    # First day of month at 6:00 AM UTC
+    - cron: '0 6 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: ${{ github.repository }}-monthly-dependency-release
+  cancel-in-progress: false
+
+jobs:
+  check-dependencies-only:
+    runs-on: ubuntu-latest
+    outputs:
+      should-release: ${{ steps.check.outputs.should-release }}
+    permissions:
+      contents: read
+      pull-requests: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.7
+        with:
+          fetch-depth: 0
+
+      - name: Check if there are dependency-only changes since last release
+        id: check
+        uses: actions/github-script@v9.0.0
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+
+            // Get latest release
+            let lastReleaseDate = null;
+            let lastReleaseTag = null;
+            try {
+              const releases = await github.rest.repos.listReleases({
+                owner,
+                repo,
+                per_page: 1
+              });
+              if (releases.data.length > 0) {
+                lastReleaseDate = new Date(releases.data[0].published_at);
+                lastReleaseTag = releases.data[0].tag_name;
+                console.log(`Last release: ${lastReleaseTag} at ${lastReleaseDate.toISOString()}`);
+              }
+            } catch (error) {
+              console.log('No previous releases found, checking all merged PRs to main');
+            }
+
+            // Get all merged commits to main since last release
+            let commits;
+            if (lastReleaseDate) {
+              const dateStr = lastReleaseDate.toISOString().split('T')[0];
+              commits = await github.rest.repos.listCommits({
+                owner,
+                repo,
+                sha: 'main',
+                since: lastReleaseDate.toISOString(),
+                per_page: 100
+              });
+            } else {
+              commits = await github.rest.repos.listCommits({
+                owner,
+                repo,
+                sha: 'main',
+                per_page: 100
+              });
+            }
+
+            console.log(`Found ${commits.data.length} commits since last release`);
+
+            // Get all PRs merged to main
+            let mergedPRs;
+            if (lastReleaseDate) {
+              mergedPRs = await github.rest.search.issuesAndPullRequests({
+                q: `is:pr is:merged repo:${owner}/${repo} base:main merged:>${lastReleaseDate.toISOString().split('T')[0]}`,
+                sort: 'updated',
+                order: 'desc',
+                per_page: 100
+              });
+            } else {
+              mergedPRs = await github.rest.search.issuesAndPullRequests({
+                q: `is:pr is:merged repo:${owner}/${repo} base:main`,
+                sort: 'updated',
+                order: 'desc',
+                per_page: 100
+              });
+            }
+
+            if (mergedPRs.data.items.length === 0) {
+              console.log('No merged PRs found since last release');
+              core.setOutput('should-release', 'false');
+              return;
+            }
+
+            // Check if any of the merged PRs have the dependencies label
+            let hasDependencyPRs = false;
+            let hasNonDependencyPRs = false;
+
+            for (const pr of mergedPRs.data.items) {
+              const labels = pr.labels.map(l => l.name);
+              if (labels.includes('dependencies')) {
+                hasDependencyPRs = true;
+                console.log(`✓ Found dependency PR: #${pr.number} - ${pr.title}`);
+              } else {
+                hasNonDependencyPRs = true;
+                console.log(`✗ Found non-dependency PR: #${pr.number} - ${pr.title}`);
+              }
+            }
+
+            if (!hasDependencyPRs) {
+              console.log('No dependency PRs found, skipping release');
+              core.setOutput('should-release', 'false');
+              return;
+            }
+
+            if (hasNonDependencyPRs) {
+              console.log('Found manual code changes, skipping auto-release');
+              core.setOutput('should-release', 'false');
+              return;
+            }
+
+            console.log('All merged PRs are dependency-only, will create release');
+            core.setOutput('should-release', 'true');
+
+  create-release:
+    needs: check-dependencies-only
+    if: needs.check-dependencies-only.outputs.should-release == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.7
+        with:
+          fetch-depth: 0
+
+      - name: Get current version
+        id: version
+        uses: actions/github-script@v9.0.0
+        with:
+          script: |
+            // Parse package.json version
+            const fs = require('fs');
+            const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            const [major, minor, patch] = packageJson.version.split('.').map(Number);
+
+            // Bump patch version
+            const newVersion = `${major}.${minor}.${patch + 1}`;
+            core.setOutput('new-version', newVersion);
+            console.log(`Version bump: ${packageJson.version} -> ${newVersion}`);
+
+      - name: Create release
+        uses: actions/github-script@v9.0.0
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const tag = `v${{ steps.version.outputs.new-version }}`;
+            const sha = context.sha;
+
+            // Get release draft to use its content
+            let releaseBody = '## Dependencies Updated\n\nThis patch release includes dependency updates only.';
+            try {
+              const releases = await github.rest.repos.listReleases({
+                owner,
+                repo,
+                per_page: 1
+              });
+
+              // Find draft release
+              if (releases.data.length > 0 && releases.data[0].draft) {
+                releaseBody = releases.data[0].body || releaseBody;
+              }
+            } catch (error) {
+              console.log('Could not fetch draft release');
+            }
+
+            const release = await github.rest.repos.createRelease({
+              owner,
+              repo,
+              tag_name: tag,
+              target_commitish: sha,
+              name: tag,
+              body: releaseBody,
+              draft: false,
+              prerelease: false
+            });
+
+            console.log(`✅ Release ${tag} created at ${release.data.html_url}`);
