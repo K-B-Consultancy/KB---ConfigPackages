@@ -28,9 +28,20 @@ jobs:
       pull-requests: read
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # All packages are versioned in lockstep with the root package.json, and the
+      # release tag must match it (enforced by publish.yml). Feed that version to the
+      # drafter instead of letting it derive one from labels.
+      - name: Read version from package.json
+        id: pkg
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
       - name: Update release draft
         uses: release-drafter/release-drafter@v7.5.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           config-name: release-drafter.yml
+          version: ${{ steps.pkg.outputs.version }}
