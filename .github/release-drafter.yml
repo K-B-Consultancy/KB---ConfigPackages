@@ -15,21 +15,14 @@ version-resolver:
 categories:
   - title: "🚀 Features"
     labels:
-      - "feature"
-      - "enhancement"
+      - "minor"
   - title: "🐛 Bug Fixes"
     labels:
-      - "fix"
+      - "patch"
       - "bugfix"
-      - "bug"
   - title: "🧰 Maintenance"
     labels:
       - "dependencies"
-  - title: "📚 Docs & Chores"
-    labels:
-      - "chore"
-      - "ci"
-      - "docs"
 template: |
   ## What's Changed
 
