@@ -441,20 +441,20 @@ ESLint and Prettier are the **CLI-first** quality gates for TS/React (see [`CODE
 
 ### ESLint
 
-Install `@kb-consultancy/eslint-config` from GitHub Packages at the monorepo root, then extend it in the root `eslint.config.js`:
+Install `@k-b-consultancy/eslint-config` from GitHub Packages at the monorepo root, then extend it in the root `eslint.config.js`:
 
 ```javascript
-import kbBase from "@kb-consultancy/eslint-config";
+import kbBase from "@k-b-consultancy/eslint-config";
 
 export default [...kbBase /*, app-specific overrides last */];
 ```
 
-The rule set itself lives in [`@kb-consultancy/eslint-config`](https://github.com/K-B-Consultancy/KB---ConfigPackages) — see the package source; this file does not restate it. Intent notes the config can't carry:
+The rule set itself lives in [`@k-b-consultancy/eslint-config`](https://github.com/K-B-Consultancy/KB---ConfigPackages) — see the package source; this file does not restate it. Intent notes the config can't carry:
 
 - `no-console` exists because output belongs in the monitoring logger
 - `max-lines` (200 for `.tsx`, 100 for `use[A-Z]*.ts` hooks) exists to force splitting components and extracting hooks, not restructuring to dodge the cap
 - `no-restricted-imports` is the mechanical form of feature isolation ([Folder structure](#folder-structure-features-based))
-- `local/no-direct-query-in-components` (the custom rule in `@kb-consultancy/eslint-config`) is the mechanical form of "hooks own all data-fetching" ([Hooks](#hooks))
+- `local/no-direct-query-in-components` (the custom rule in `@k-b-consultancy/eslint-config`) is the mechanical form of "hooks own all data-fetching" ([Hooks](#hooks))
 - `jsx-a11y` strict is the mechanical form of [Accessibility](#accessibility)
 - `import/no-default-export` — Next.js apps re-enable default exports for framework files only, as an app-specific override (see [`nextjs/RULES.md`](../nextjs/RULES.md))
 
@@ -464,10 +464,10 @@ CI runs `eslint --max-warnings 0` and fails if `eslint.config.js` doesn't extend
 
 ### Prettier
 
-Install `@kb-consultancy/prettier-config` from GitHub Packages at the monorepo root, then re-export it in the root `prettier.config.js`:
+Install `@k-b-consultancy/prettier-config` from GitHub Packages at the monorepo root, then re-export it in the root `prettier.config.js`:
 
 ```javascript
-export { default } from "@kb-consultancy/prettier-config";
+export { default } from "@k-b-consultancy/prettier-config";
 ```
 
 Editors format-on-save. CI runs `prettier --check`. Stylelint (CSS outside Tailwind) is cross-stack tooling — see [`CODE_QUALITY.md`](../../00-org-wide/CODE_QUALITY.md).

@@ -38,4 +38,4 @@ jobs:
       - name: Publish packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm -r --filter "@kb-consultancy/*" publish --no-git-checks
+        run: pnpm -r --filter "@k-b-consultancy/*" publish --no-git-checks

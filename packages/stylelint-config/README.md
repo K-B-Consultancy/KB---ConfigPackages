@@ -1,3 +1,3 @@
-# @kb-consultancy/stylelint-config
+# @k-b-consultancy/stylelint-config
 
 Placeholder stylelint config package for future expansion.

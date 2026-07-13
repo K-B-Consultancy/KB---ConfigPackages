@@ -1,11 +1,11 @@
-# @kb-consultancy/eslint-config
+# @k-b-consultancy/eslint-config
 
 KB Consultancy shared ESLint flat config.
 
 ## Usage
 
 ```js
-import kbBase from "@kb-consultancy/eslint-config";
+import kbBase from "@k-b-consultancy/eslint-config";
 
 export default [...kbBase];
 ```

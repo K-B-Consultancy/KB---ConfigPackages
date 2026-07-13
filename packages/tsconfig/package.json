@@ -1,5 +1,5 @@
 {
-  "name": "@kb-consultancy/tsconfig",
+  "name": "@k-b-consultancy/tsconfig",
   "version": "1.0.0",
   "private": false,
   "main": "base.json",

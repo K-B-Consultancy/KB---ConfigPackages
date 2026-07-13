@@ -4,19 +4,19 @@ Public monorepo that publishes KB Consultancy shared configuration packages to G
 
 ## Packages
 
-- `@kb-consultancy/eslint-config`
-- `@kb-consultancy/prettier-config`
-- `@kb-consultancy/tsconfig`
-- `@kb-consultancy/stylelint-config`
+- `@k-b-consultancy/eslint-config`
+- `@k-b-consultancy/prettier-config`
+- `@k-b-consultancy/tsconfig`
+- `@k-b-consultancy/stylelint-config`
 
 ## Install in client project
 
 ```json
 {
   "devDependencies": {
-    "@kb-consultancy/eslint-config": "1.0.0",
-    "@kb-consultancy/prettier-config": "1.0.0",
-    "@kb-consultancy/tsconfig": "1.0.0"
+    "@k-b-consultancy/eslint-config": "1.0.0",
+    "@k-b-consultancy/prettier-config": "1.0.0",
+    "@k-b-consultancy/tsconfig": "1.0.0"
   }
 }
 ```
@@ -24,7 +24,7 @@ Public monorepo that publishes KB Consultancy shared configuration packages to G
 ### ESLint
 
 ```js
-import kbBase from "@kb-consultancy/eslint-config";
+import kbBase from "@k-b-consultancy/eslint-config";
 
 export default [...kbBase];
 ```
@@ -32,14 +32,14 @@ export default [...kbBase];
 ### Prettier
 
 ```js
-export { default } from "@kb-consultancy/prettier-config";
+export { default } from "@k-b-consultancy/prettier-config";
 ```
 
 ### TypeScript
 
 ```json
 {
-  "extends": "@kb-consultancy/tsconfig/base.json"
+  "extends": "@k-b-consultancy/tsconfig/base.json"
 }
 ```
 
@@ -49,5 +49,5 @@ Create a GitHub release (or use workflow dispatch) to publish all packages to Gi
 
 ## Migration from KB-Documentation
 
-- Replace copied `.ai-docs/config/*` files with exact-pinned `@kb-consultancy/*` dependencies.
+- Replace copied `.ai-docs/config/*` files with exact-pinned `@k-b-consultancy/*` dependencies.
 - Keep KB-Documentation as docs-only for config guidance.

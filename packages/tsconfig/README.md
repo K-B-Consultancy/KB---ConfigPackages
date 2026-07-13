@@ -1,4 +1,4 @@
-# @kb-consultancy/tsconfig
+# @k-b-consultancy/tsconfig
 
 KB Consultancy shared strict TypeScript base config.
 
@@ -6,6 +6,6 @@ KB Consultancy shared strict TypeScript base config.
 
 ```json
 {
-  "extends": "@kb-consultancy/tsconfig/base.json"
+  "extends": "@k-b-consultancy/tsconfig/base.json"
 }
 ```
