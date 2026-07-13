@@ -102,7 +102,7 @@ echo "  ℹ apps/api (Maven/Spring Boot) is NOT an npm workspace member — npm 
 echo "    picks up apps/* dirs that contain a package.json, so this is automatic."
 
 # ─── 5) .github/ scaffolding (Copilot reads AGENTS.md natively — no symlink) ──
-echo "[5/6] Copying .github/ workflows and config…"
+echo "[5/7] Copying .github/ workflows and config…"
 mkdir -p ".github/workflows"
 cp ".ai-docs/20-templates/.github/workflows/pr-checks.yml"            ".github/workflows/"
 cp ".ai-docs/20-templates/.github/workflows/copilot-setup-steps.yml" ".github/workflows/"
@@ -117,8 +117,14 @@ else
   echo "  ℹ Release Drafter skipped (no GitHub-Releases production flow — add later if needed)"
 fi
 
-# ─── 6) Root .gitignore ──────────────────────────────────────────────────────
-echo "[6/6] Writing root .gitignore…"
+# ─── 6) .vscode/ editor config ──────────────────────────────────────────────────
+echo "[6/7] Copying .vscode/ editor config…"
+mkdir -p ".vscode"
+cp ".ai-docs/20-templates/.vscode/settings.json" ".vscode/"
+echo "  ✓ .vscode/settings.json (ESLint, Prettier, TypeScript config)"
+
+# ─── 7) Root .gitignore ──────────────────────────────────────────────────────
+echo "[7/7] Writing root .gitignore…"
 if [ ! -f ".gitignore" ]; then
   cat > ".gitignore" <<'EOF'
 # Dependencies (npm workspace hoists to the root)
