@@ -9,22 +9,13 @@ Public monorepo that publishes KB Consultancy shared configuration packages to G
 - `@k-b-consultancy/tsconfig`
 - `@k-b-consultancy/stylelint-config`
 
-## Install in client project
-
-```json
-{
-  "devDependencies": {
-    "@k-b-consultancy/eslint-config": "1.0.0",
-    "@k-b-consultancy/prettier-config": "1.0.0",
-    "@k-b-consultancy/tsconfig": "1.0.0"
-  }
-}
-```
+Each package has a README with full install/wiring instructions, including the GitHub Packages registry setup. Quick reference:
 
 ### ESLint
 
 ```js
 import kbBase from "@k-b-consultancy/eslint-config";
+// or: @k-b-consultancy/eslint-config/nextjs · @k-b-consultancy/eslint-config/tanstack-start
 
 export default [...kbBase];
 ```
@@ -42,6 +33,8 @@ export { default } from "@k-b-consultancy/prettier-config";
   "extends": "@k-b-consultancy/tsconfig/base.json"
 }
 ```
+
+Path aliases (`baseUrl`/`paths`) are app-owned — the shared base deliberately carries none.
 
 ## Release and publishing
 
