@@ -1,0 +1,16 @@
+{
+  "name": "@kb-consultancy/prettier-config",
+  "version": "1.0.0",
+  "private": false,
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "build": "echo 'No build step required'"
+  }
+}

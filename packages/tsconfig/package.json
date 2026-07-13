@@ -1,0 +1,16 @@
+{
+  "name": "@kb-consultancy/tsconfig",
+  "version": "1.0.0",
+  "private": false,
+  "main": "base.json",
+  "exports": {
+    ".": "./base.json",
+    "./base.json": "./base.json"
+  },
+  "files": [
+    "base.json"
+  ],
+  "scripts": {
+    "build": "echo 'No build step required'"
+  }
+}
