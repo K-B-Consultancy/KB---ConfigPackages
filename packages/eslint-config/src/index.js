@@ -7,6 +7,17 @@ import noDirectQueryInComponents from "./local-rules/no-direct-query-in-componen
 import allowUnderscoreTypeOnlyImports from "./local-rules/allow-underscore-type-only-imports.js";
 
 export default [
+  {
+    // Generated and build output — never linted (react-base RULES.md lists the same
+    // paths for .prettierignore; the ESLint side ships here so clients don't repeat it)
+    ignores: [
+      "**/dist/",
+      "**/coverage/",
+      "**/src/generated/",
+      "**/routeTree.gen.ts",
+      "**/payload-types.ts"
+    ]
+  },
   ...tseslint.configs.recommended,
   {
     plugins: {
@@ -26,6 +37,11 @@ export default [
       ...jsxA11y.configs.recommended.rules,
       "local/no-direct-query-in-components": "error",
       "local/allow-underscore-type-only-imports": "error",
+      // tsc owns module resolution (typecheck is a required CI gate in every client);
+      // these two need a filesystem resolver that can't see TS paths without an extra
+      // native dependency, and only produce false positives in TS projects
+      "import/no-unresolved": "off",
+      "import/named": "off",
       "@typescript-eslint/no-unused-vars": [
         "error",
         {
