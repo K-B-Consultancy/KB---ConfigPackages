@@ -31,7 +31,7 @@ jobs:
 
       - name: Check if there are dependency-only changes since last release
         id: check
-        uses: actions/github-script@v7.0.1
+        uses: actions/github-script@v9.0.0
         with:
           script: |
             const { owner, repo } = context.repo;
@@ -145,7 +145,7 @@ jobs:
 
       - name: Get current version
         id: version
-        uses: actions/github-script@v7.0.1
+        uses: actions/github-script@v9.0.0
         with:
           script: |
             // Parse package.json version
@@ -159,7 +159,7 @@ jobs:
             console.log(`Version bump: ${packageJson.version} -> ${newVersion}`);
 
       - name: Create release
-        uses: actions/github-script@v7.0.1
+        uses: actions/github-script@v9.0.0
         with:
           script: |
             const { owner, repo } = context.repo;
