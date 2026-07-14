@@ -1,6 +1,6 @@
 {
   "name": "@k-b-consultancy/stylelint-config",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "private": false,
   "publishConfig": {
     "access": "public"

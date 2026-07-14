@@ -4,7 +4,7 @@ import base from './index.js';
 
 /**
  * TanStack Start flavor of the org base config (see tanstack-start/RULES.md in
- * KB-Documentation). Requires the optional peer `eslint-plugin-react-refresh`.
+ * KB-Documentation). Pulls in `eslint-plugin-react-refresh` as a direct dependency.
  */
 export default [
   ...base,
