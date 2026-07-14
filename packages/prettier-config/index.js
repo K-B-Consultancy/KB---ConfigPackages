@@ -10,7 +10,7 @@ export default {
   quoteProps: 'as-needed',
   jsxSingleQuote: false,
   trailingComma: 'none',
-  bracketSpacing: false,
+  bracketSpacing: true,
   arrowParens: 'avoid',
   endOfLine: 'lf'
 };
