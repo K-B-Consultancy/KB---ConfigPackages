@@ -1,6 +1,6 @@
 {
   "name": "@k-b-consultancy/eslint-config",
-  "version": "1.2.4",
+  "version": "1.2.6",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -26,27 +26,18 @@
     "build": "echo 'No build step required'",
     "test": "node --test"
   },
+  "dependencies": {
+    "typescript-eslint": "^8.63.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import-x": "^4.17.1",
+    "eslint-plugin-react-refresh": "^0.5.3"
+  },
   "peerDependencies": {
-    "eslint": ">=9.0.0",
-    "typescript-eslint": ">=8.0.0",
-    "eslint-plugin-react-hooks": ">=5.0.0",
-    "eslint-plugin-jsx-a11y": ">=6.0.0",
-    "eslint-config-prettier": ">=10.0.0",
-    "eslint-plugin-import-x": ">=4.0.0",
-    "eslint-plugin-react-refresh": ">=0.4.0"
+    "eslint": ">=9.0.0"
   },
   "devDependencies": {
-    "eslint": "9.31.0",
-    "typescript-eslint": "8.63.0",
-    "eslint-plugin-react-hooks": "7.1.1",
-    "eslint-plugin-jsx-a11y": "6.10.2",
-    "eslint-config-prettier": "10.1.8",
-    "eslint-plugin-import-x": "4.17.1",
-    "eslint-plugin-react-refresh": "0.5.3"
-  },
-  "peerDependenciesMeta": {
-    "eslint-plugin-react-refresh": {
-      "optional": true
-    }
+    "eslint": "9.31.0"
   }
 }

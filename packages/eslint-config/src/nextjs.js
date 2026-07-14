@@ -1,15 +1,113 @@
-import base from './index.js';
+import importX from 'eslint-plugin-import-x';
+import eslintConfigPrettier from 'eslint-config-prettier';
+import noDirectQueryInComponents from './local-rules/no-direct-query-in-components.js';
+import allowUnderscoreTypeOnlyImports from './local-rules/allow-underscore-type-only-imports.js';
 
 /**
  * Next.js flavor of the org base config (see nextjs/RULES.md in KB-Documentation).
  *
- * Append `eslint-config-next` (core-web-vitals + typescript) in the app itself —
- * its version is coupled to the installed Next.js version, so it can't ship here.
+ * Unlike index.js, this does NOT register typescript-eslint, jsx-a11y, or
+ * react-hooks — eslint-config-next already registers all three under the same
+ * plugin keys, and ESLint 9 flat config rejects two different instances of a
+ * plugin sharing a key ("Cannot redefine plugin"). Append eslint-config-next
+ * (core-web-vitals + typescript) in the app itself; its rules cover the same
+ * ground those three plugins would have.
  */
 export default [
-  ...base,
   {
-    ignores: ['**/.next/', '**/.turbo/', '**/next-env.d.ts']
+    ignores: [
+      '**/dist/',
+      '**/build/',
+      '**/.output/',
+      '**/coverage/',
+      '**/src/generated/',
+      '**/routeTree.gen.ts',
+      '**/payload-types.ts',
+      '**/.next/',
+      '**/.turbo/',
+      '**/next-env.d.ts'
+    ]
+  },
+  {
+    plugins: {
+      'import-x': importX,
+      local: {
+        rules: {
+          'no-direct-query-in-components': noDirectQueryInComponents,
+          'allow-underscore-type-only-imports': allowUnderscoreTypeOnlyImports
+        }
+      }
+    },
+    rules: {
+      ...importX.flatConfigs.recommended.rules,
+      'local/no-direct-query-in-components': 'error',
+      'local/allow-underscore-type-only-imports': 'error',
+      // tsc owns module resolution; eslint-config-next's own typescript-eslint
+      // registration is what actually type-checks import targets here
+      'import-x/no-unresolved': 'off',
+      'import-x/named': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_[A-Za-z0-9].*',
+          varsIgnorePattern: '^_[A-Za-z0-9].*',
+          caughtErrorsIgnorePattern: '^_[A-Za-z0-9].*'
+        }
+      ],
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-non-null-assertion': 'error',
+      '@typescript-eslint/consistent-type-imports': 'error',
+      // Output belongs in the monitoring logger (react-base RULES.md § Monitoring)
+      'no-console': 'error',
+      'no-restricted-exports': ['error', { restrictDefaultExports: { direct: true } }],
+      // One bucket, purely alphabetical — no group separation or blank lines.
+      // Side-effect-only imports (import "./x.css") are never reordered by this rule.
+      'import-x/order': [
+        'error',
+        {
+          groups: [
+            ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'unknown']
+          ],
+          'newlines-between': 'never',
+          alphabetize: { order: 'asc', caseInsensitive: true }
+        }
+      ],
+      // Feature isolation: cross-feature imports go through the feature's
+      // public API (features/<name>/index.ts), never its internals
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/features/*/*'],
+              message:
+                "Import from the feature's public API (@/features/<name>) instead of reaching into its internals."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    // Component files ≤ 200 lines — split components, don't restructure to dodge the cap
+    files: ['**/*.tsx'],
+    rules: {
+      'max-lines': ['error', { max: 200, skipBlankLines: true, skipComments: true }]
+    }
+  },
+  {
+    // Hook files ≤ 100 lines (use[A-Z] so api modules like users.ts don't match)
+    files: ['**/use[A-Z]*.ts'],
+    rules: {
+      'max-lines': ['error', { max: 100, skipBlankLines: true, skipComments: true }]
+    }
+  },
+  {
+    // Config files are consumed by tools that expect a default export
+    files: ['**/*.config.{ts,js,mjs,cjs}', '**/vite.config.ts', '**/playwright.config.ts'],
+    rules: {
+      'no-restricted-exports': 'off'
+    }
   },
   {
     // Next.js framework files are consumed by the framework via default exports
@@ -23,5 +121,6 @@ export default [
     rules: {
       'no-restricted-exports': 'off'
     }
-  }
+  },
+  eslintConfigPrettier
 ];
