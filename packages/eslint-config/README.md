@@ -63,7 +63,7 @@ export default [...kbTanstackStart];
 - `max-lines` (200 for `.tsx`, 100 for `use[A-Z]*.ts`) — split components, extract hooks
 - `no-restricted-exports` (default exports) — named exports everywhere; stack flavors re-enable defaults only where the framework requires them
 - `no-restricted-imports` on `@/features/*/*` — cross-feature imports go through the feature's public API
-- `import-x/order` — grouped, alphabetized imports (auto-fixable)
+- `import-x/order` — one alphabetized import block, no group separation (auto-fixable)
 - `jsx-a11y` strict — accessibility is mechanical, not aspirational
 - `import-x/no-unresolved` / `import-x/named` are **off**: tsc owns module resolution (typecheck is a required CI gate)
 
