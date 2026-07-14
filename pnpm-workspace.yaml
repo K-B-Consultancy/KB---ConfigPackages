@@ -1,5 +1,7 @@
 packages:
-  - "packages/*"
+  - 'packages/*'
 allowBuilds:
   # unrs-resolver ships prebuilt binaries; its postinstall build fallback is not needed
   unrs-resolver: false
+minimumReleaseAgeExclude:
+  - '@k-b-consultancy/prettier-config@1.2.2'

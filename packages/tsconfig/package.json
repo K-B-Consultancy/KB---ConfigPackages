@@ -1,7 +1,10 @@
 {
   "name": "@k-b-consultancy/tsconfig",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "base.json",
   "exports": {
     ".": "./base.json",

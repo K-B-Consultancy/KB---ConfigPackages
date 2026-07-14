@@ -1,6 +1,6 @@
-import reactRefresh from "eslint-plugin-react-refresh";
+import reactRefresh from 'eslint-plugin-react-refresh';
 
-import base from "./index.js";
+import base from './index.js';
 
 /**
  * TanStack Start flavor of the org base config (see tanstack-start/RULES.md in
@@ -9,21 +9,21 @@ import base from "./index.js";
 export default [
   ...base,
   {
-    ignores: ["**/.output/", "**/.vinxi/", "**/.nitro/", "**/.tanstack/"]
+    ignores: ['**/.output/', '**/.vinxi/', '**/.nitro/', '**/.tanstack/']
   },
   {
     plugins: {
-      "react-refresh": reactRefresh
+      'react-refresh': reactRefresh
     },
     rules: {
-      "react-refresh/only-export-components": ["warn", { allowConstantExport: true }]
+      'react-refresh/only-export-components': ['warn', {allowConstantExport: true}]
     }
   },
   {
     // Vendored shadcn/ui primitives co-locate components with their variant helpers
-    files: ["**/src/components/ui/**/*.{ts,tsx}"],
+    files: ['**/src/components/ui/**/*.{ts,tsx}'],
     rules: {
-      "react-refresh/only-export-components": "off"
+      'react-refresh/only-export-components': 'off'
     }
   }
 ];

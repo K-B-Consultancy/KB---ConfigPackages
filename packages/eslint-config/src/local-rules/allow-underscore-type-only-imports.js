@@ -14,7 +14,7 @@ function maybeMarkAsUsed(context, name) {
 }
 
 function getLocalName(node) {
-  if (!node || !node.local || node.local.type !== "Identifier") {
+  if (!node || !node.local || node.local.type !== 'Identifier') {
     return null;
   }
 
@@ -23,10 +23,10 @@ function getLocalName(node) {
 
 export default {
   meta: {
-    type: "problem",
+    type: 'problem',
     docs: {
       description:
-        "Allow intentionally underscore-prefixed bindings for type-only import compatibility"
+        'Allow intentionally underscore-prefixed bindings for type-only import compatibility'
     },
     schema: []
   },
