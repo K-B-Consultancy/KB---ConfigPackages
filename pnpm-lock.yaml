@@ -26,23 +26,29 @@ importers:
 
   packages/eslint-config:
     dependencies:
+      '@react-native/eslint-plugin':
+        specifier: 0.86.0
+        version: 0.86.0
       eslint-config-prettier:
-        specifier: ^10.1.8
+        specifier: 10.1.8
         version: 10.1.8(eslint@9.31.0)
       eslint-plugin-import-x:
-        specifier: ^4.17.1
+        specifier: 4.17.1
         version: 4.17.1(@typescript-eslint/utils@8.63.0(eslint@9.31.0)(typescript@5.8.3))(eslint-import-resolver-node@0.3.10)(eslint@9.31.0)
       eslint-plugin-jsx-a11y:
-        specifier: ^6.10.2
+        specifier: 6.10.2
         version: 6.10.2(eslint@9.31.0)
       eslint-plugin-react-hooks:
-        specifier: ^7.1.1
+        specifier: 7.1.1
         version: 7.1.1(eslint@9.31.0)
+      eslint-plugin-react-native:
+        specifier: 5.0.0
+        version: 5.0.0(eslint@9.31.0)
       eslint-plugin-react-refresh:
-        specifier: ^0.5.3
+        specifier: 0.5.3
         version: 0.5.3(eslint@9.31.0)
       typescript-eslint:
-        specifier: ^8.63.0
+        specifier: 8.63.0
         version: 8.63.0(eslint@9.31.0)(typescript@5.8.3)
     devDependencies:
       eslint:
@@ -212,6 +218,10 @@ packages:
     peerDependencies:
       '@emnapi/core': ^1.7.1
       '@emnapi/runtime': ^1.7.1
+
+  '@react-native/eslint-plugin@0.86.0':
+    resolution: {integrity: sha512-v0zZAO9tfB72RdluTGHZcYDe5fIH6hf/bk8jATTCdwNNWcvPEjHdzuA2O6M4OAEmC+UDq/kURb+LY5f2fGGRGg==}
+    engines: {node: ^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0}
 
   '@tybys/wasm-util@0.10.3':
     resolution: {integrity: sha512-F3fo1MYrRJYL3zER0OUOmkutjr1Vp23m7OsSgp7nq4SP6OqX6C/56XFIPAl5bt3zaBRjmW7SGz3u/6LwFpYcOg==}
@@ -667,6 +677,14 @@ packages:
     engines: {node: '>=18'}
     peerDependencies:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0 || ^10.0.0
+
+  eslint-plugin-react-native-globals@0.1.2:
+    resolution: {integrity: sha512-9aEPf1JEpiTjcFAmmyw8eiIXmcNZOqaZyHO77wgm0/dWfT/oxC1SrIq8ET38pMxHYrcB6Uew+TzUVsBeczF88g==}
+
+  eslint-plugin-react-native@5.0.0:
+    resolution: {integrity: sha512-VyWlyCC/7FC/aONibOwLkzmyKg4j9oI8fzrk9WYNs4I8/m436JuOTAFwLvEn1CVvc7La4cPfbCyspP4OYpP52Q==}
+    peerDependencies:
+      eslint: ^3.17.0 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9
 
   eslint-plugin-react-refresh@0.5.3:
     resolution: {integrity: sha512-5EMmLCV98Pi4o/f/3DP/v/tNqLHMIc9I8LKClNDWhZ9JTho89/kQcitCXQBMG7sAfVRK0Ie3T2EDOzp1YXYiVA==}
@@ -1546,6 +1564,8 @@ snapshots:
       '@tybys/wasm-util': 0.10.3
     optional: true
 
+  '@react-native/eslint-plugin@0.86.0': {}
+
   '@tybys/wasm-util@0.10.3':
     dependencies:
       tslib: 2.8.1
@@ -2072,6 +2092,13 @@ snapshots:
       zod-validation-error: 4.0.2(zod@4.4.3)
     transitivePeerDependencies:
       - supports-color
+
+  eslint-plugin-react-native-globals@0.1.2: {}
+
+  eslint-plugin-react-native@5.0.0(eslint@9.31.0):
+    dependencies:
+      eslint: 9.31.0
+      eslint-plugin-react-native-globals: 0.1.2
 
   eslint-plugin-react-refresh@0.5.3(eslint@9.31.0):
     dependencies:

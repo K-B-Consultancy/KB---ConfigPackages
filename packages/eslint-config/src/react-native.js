@@ -1,55 +1,54 @@
+import tseslint from 'typescript-eslint';
+import reactHooks from 'eslint-plugin-react-hooks';
 import importX from 'eslint-plugin-import-x';
 import eslintConfigPrettier from 'eslint-config-prettier';
+import reactNativePlugin from '@react-native/eslint-plugin';
+import reactNativeCommunityPlugin from 'eslint-plugin-react-native';
 import noDirectQueryInComponents from './local-rules/no-direct-query-in-components.js';
 import allowUnderscoreTypeOnlyImports from './local-rules/allow-underscore-type-only-imports.js';
-import noConsoleInServerComponents from './local-rules/no-console-in-server-components.js';
 
 /**
- * Next.js flavor of the org base config (see nextjs/RULES.md in KB-Documentation).
+ * React Native flavor of the org base config (see react-native/RULES.md in KB-Documentation).
  *
- * Unlike index.js, this does NOT register typescript-eslint, jsx-a11y, or
- * react-hooks — eslint-config-next already registers all three under the same
- * plugin keys, and ESLint 9 flat config rejects two different instances of a
- * plugin sharing a key ("Cannot redefine plugin"). Append eslint-config-next
- * (core-web-vitals + typescript) in the app itself; its rules cover the same
- * ground those three plugins would have.
+ * Unlike tanstack-start.js, this does NOT spread index.js: jsx-a11y's rules target DOM
+ * elements (img, a, label...) that don't exist in React Native, and some rules key off
+ * prop names alone — jsx-a11y/no-autofocus would false-positive on RN's own TextInput
+ * autoFocus prop. Everything else index.js enforces is duplicated here instead.
  */
 export default [
   {
     ignores: [
       '**/dist/',
       '**/build/',
-      '**/.output/',
       '**/coverage/',
       '**/src/generated/',
-      '**/routeTree.gen.ts',
-      '**/payload-types.ts',
-      '**/.next/',
-      '**/.turbo/',
-      '**/next-env.d.ts'
+      '**/ios/',
+      '**/android/',
+      '**/.expo/',
+      '**/.expo-shared/',
+      '**/web-build/'
     ]
   },
+  ...tseslint.configs.recommended,
   {
     plugins: {
+      'react-hooks': reactHooks,
       'import-x': importX,
+      '@react-native': reactNativePlugin,
+      'react-native': reactNativeCommunityPlugin,
       local: {
         rules: {
           'no-direct-query-in-components': noDirectQueryInComponents,
-          'allow-underscore-type-only-imports': allowUnderscoreTypeOnlyImports,
-          'no-console-in-server-components': noConsoleInServerComponents
+          'allow-underscore-type-only-imports': allowUnderscoreTypeOnlyImports
         }
       }
     },
     rules: {
+      ...reactHooks.configs.recommended.rules,
       ...importX.flatConfigs.recommended.rules,
       'local/no-direct-query-in-components': 'error',
       'local/allow-underscore-type-only-imports': 'error',
-      // Datadog RUM only forwards browser console output — Server Components/Route
-      // Handlers/Server Actions (the App Router default, no "use client" directive) run
-      // on the server, so console calls there go nowhere.
-      'local/no-console-in-server-components': 'error',
-      // tsc owns module resolution; eslint-config-next's own typescript-eslint
-      // registration is what actually type-checks import targets here
+      // tsc owns module resolution (typecheck is a required CI gate in every client)
       'import-x/no-unresolved': 'off',
       'import-x/named': 'off',
       '@typescript-eslint/no-unused-vars': [
@@ -89,7 +88,18 @@ export default [
             }
           ]
         }
-      ]
+      ],
+      // Official RN rules: catches deep imports into RN internals and invalid
+      // PlatformColor/DynamicColorIOS arguments
+      '@react-native/no-deep-imports': 'error',
+      '@react-native/platform-colors': 'error',
+      // eslint-plugin-react-native's other rules (no-unused-styles, split-platform-components,
+      // no-single-element-style-arrays) call deprecated context methods ESLint 10 removed and
+      // crash outright — no-raw-text is the one rule in the package that doesn't. Revisit the
+      // rest once upstream ships an ESLint-10-compatible release.
+      // Raw text outside <Text> throws at runtime; if you wrap <Text> in a design-system
+      // component (e.g. <AppText>), add it via an app-level `skip` option override
+      'react-native/no-raw-text': 'error'
     }
   },
   {
@@ -107,21 +117,9 @@ export default [
     }
   },
   {
-    // Config files are consumed by tools that expect a default export
-    files: ['**/*.config.{ts,js,mjs,cjs}', '**/vite.config.ts', '**/playwright.config.ts'],
-    rules: {
-      'no-restricted-exports': 'off'
-    }
-  },
-  {
-    // Next.js framework files are consumed by the framework via default exports
-    files: [
-      '**/app/**/{page,layout,template,loading,error,not-found,global-error,default,route}.{ts,tsx}',
-      '**/app/**/{sitemap,robots,manifest,icon,apple-icon,opengraph-image,twitter-image}.{ts,tsx}',
-      '**/middleware.ts',
-      '**/instrumentation.ts',
-      '**/mdx-components.tsx'
-    ],
+    // Config files, RN's own entry point, and Expo Router route files are consumed
+    // by tools that expect a default export
+    files: ['**/*.config.{ts,js,mjs,cjs}', 'index.js', 'App.tsx', '**/app/**/{_layout,index}.tsx'],
     rules: {
       'no-restricted-exports': 'off'
     }
