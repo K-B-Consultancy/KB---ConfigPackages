@@ -5,6 +5,11 @@
   "publishConfig": {
     "access": "public"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/K-B-Consultancy/KB---ConfigPackages.git",
+    "directory": "packages/eslint-config"
+  },
   "type": "module",
   "main": "src/index.js",
   "exports": {
