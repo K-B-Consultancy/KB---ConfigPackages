@@ -1,0 +1,44 @@
+name: Require Version Label
+
+on:
+  pull_request:
+    types: [opened, reopened, labeled, unlabeled, synchronize]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  check-label:
+    # Dependabot PRs are batched into the monthly release instead of bumping on every merge.
+    if: github.event.pull_request.user.login != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require exactly one semver label when packages/ changes
+        uses: actions/github-script@v9.0.0
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const pull_number = context.payload.pull_request.number;
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner,
+              repo,
+              pull_number
+            });
+            const touchesPackages = files.some(f => f.filename.startsWith('packages/'));
+            if (!touchesPackages) {
+              console.log('No packages/ changes in this PR — no release label required.');
+              return;
+            }
+
+            const labels = context.payload.pull_request.labels.map(l => l.name);
+            const semverLabels = labels.filter(l => ['major', 'minor', 'patch'].includes(l));
+
+            if (semverLabels.length === 0) {
+              core.setFailed(
+                'This PR changes packages/ — add exactly one of the "major", "minor", or "patch" ' +
+                  'labels so merging can bump the package versions.'
+              );
+            } else if (semverLabels.length > 1) {
+              core.setFailed(`Only one semver label is allowed, found: ${semverLabels.join(', ')}`);
+            }
