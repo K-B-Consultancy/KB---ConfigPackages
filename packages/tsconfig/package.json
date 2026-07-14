@@ -1,6 +1,6 @@
 {
   "name": "@k-b-consultancy/tsconfig",
-  "version": " 1.2.4",
+  "version": "1.2.4",
   "private": false,
   "publishConfig": {
     "access": "public"
