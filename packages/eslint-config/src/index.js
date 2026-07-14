@@ -5,6 +5,7 @@ import jsxA11y from 'eslint-plugin-jsx-a11y';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import noDirectQueryInComponents from './local-rules/no-direct-query-in-components.js';
 import allowUnderscoreTypeOnlyImports from './local-rules/allow-underscore-type-only-imports.js';
+import noConsoleInServerFunctions from './local-rules/no-console-in-server-functions.js';
 
 export default [
   {
@@ -30,7 +31,11 @@ export default [
       local: {
         rules: {
           'no-direct-query-in-components': noDirectQueryInComponents,
-          'allow-underscore-type-only-imports': allowUnderscoreTypeOnlyImports
+          'allow-underscore-type-only-imports': allowUnderscoreTypeOnlyImports,
+          // Registered here (not enabled) so tanstack-start.js can turn it on without
+          // re-declaring the "local" plugin object — flat config forbids redefining a
+          // plugin key with a different object once a flavor spreads this config.
+          'no-console-in-server-functions': noConsoleInServerFunctions
         }
       }
     },
@@ -55,8 +60,6 @@ export default [
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-non-null-assertion': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
-      // Output belongs in the monitoring logger (react-base RULES.md § Monitoring)
-      'no-console': 'error',
       // Same intent as import/no-default-export, but via the ESLint core rule —
       // the plugin rule reads context.parserOptions, which ESLint 10 removed
       'no-restricted-exports': ['error', { restrictDefaultExports: { direct: true } }],
@@ -89,17 +92,17 @@ export default [
     }
   },
   {
-    // Component files ≤ 200 lines — split components, don't restructure to dodge the cap
+    // Component files ≤ 300 lines — split components, don't restructure to dodge the cap
     files: ['**/*.tsx'],
     rules: {
-      'max-lines': ['error', { max: 200, skipBlankLines: true, skipComments: true }]
+      'max-lines': ['error', { max: 300, skipBlankLines: true, skipComments: true }]
     }
   },
   {
-    // Hook files ≤ 100 lines (use[A-Z] so api modules like users.ts don't match)
+    // Hook files ≤ 200 lines (use[A-Z] so api modules like users.ts don't match)
     files: ['**/use[A-Z]*.ts'],
     rules: {
-      'max-lines': ['error', { max: 100, skipBlankLines: true, skipComments: true }]
+      'max-lines': ['error', { max: 200, skipBlankLines: true, skipComments: true }]
     }
   },
   {

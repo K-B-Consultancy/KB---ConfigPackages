@@ -16,7 +16,10 @@ export default [
       'react-refresh': reactRefresh
     },
     rules: {
-      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }]
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      // Datadog RUM only forwards browser console output — createServerFn/createServerOnlyFn
+      // handlers run on the server, so console calls inside them go nowhere.
+      'local/no-console-in-server-functions': 'error'
     }
   },
   {
