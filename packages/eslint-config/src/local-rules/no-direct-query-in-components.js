@@ -1,9 +1,13 @@
 const MESSAGE =
-  "Avoid direct query calls in component files. Move data fetching/query logic to a hook or service.";
+  'Avoid direct query calls in component files. Move data fetching/query logic to a hook or service.';
 
 function isComponentFile(filename) {
-  const normalized = filename.replace(/\\/g, "/");
-  return normalized.includes("/components/") || normalized.endsWith(".tsx") || normalized.endsWith(".jsx");
+  const normalized = filename.replace(/\\/g, '/');
+  return (
+    normalized.includes('/components/') ||
+    normalized.endsWith('.tsx') ||
+    normalized.endsWith('.jsx')
+  );
 }
 
 function isDirectQueryCall(callee) {
@@ -11,12 +15,12 @@ function isDirectQueryCall(callee) {
     return false;
   }
 
-  if (callee.type === "Identifier") {
-    return callee.name === "query";
+  if (callee.type === 'Identifier') {
+    return callee.name === 'query';
   }
 
-  if (callee.type === "MemberExpression" && !callee.computed) {
-    return callee.property.type === "Identifier" && callee.property.name === "query";
+  if (callee.type === 'MemberExpression' && !callee.computed) {
+    return callee.property.type === 'Identifier' && callee.property.name === 'query';
   }
 
   return false;
@@ -24,9 +28,9 @@ function isDirectQueryCall(callee) {
 
 export default {
   meta: {
-    type: "problem",
+    type: 'problem',
     docs: {
-      description: "Disallow direct query calls in component files"
+      description: 'Disallow direct query calls in component files'
     },
     schema: [],
     messages: {
@@ -44,7 +48,7 @@ export default {
         if (isDirectQueryCall(node.callee)) {
           context.report({
             node,
-            messageId: "noDirectQueryInComponents"
+            messageId: 'noDirectQueryInComponents'
           });
         }
       }

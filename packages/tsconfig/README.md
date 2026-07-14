@@ -4,7 +4,7 @@ Org-wide strict TypeScript flag set — the executable form of `react-base/RULES
 
 ## Install
 
-Registry setup first (see `DEPENDENCIES.md` § GitHub Packages in your repo's `.ai-docs/`). Then, exact-pinned:
+Published on the public npm registry — no registry setup or auth needed. Exact-pinned:
 
 ```sh
 pnpm add -D @k-b-consultancy/tsconfig typescript
@@ -29,9 +29,12 @@ pnpm add -D @k-b-consultancy/tsconfig typescript
 ## What the base deliberately does NOT set
 
 - **`baseUrl`** — a hard error under TypeScript 6 (TS5101); never re-add it.
-- **`paths`** — relative paths declared in an extended config resolve inside `node_modules`, so aliases must live in the consuming app.
+- **`paths`** — relative paths declared in an extended config resolve inside `node_modules`, so
+  aliases must live in the consuming app.
 - **`target` / `module` / `jsx` / `lib`** — runtime-specific; each app declares its own.
 
 ## Adopting in a legacy codebase
 
-Extend the base and explicitly override the strictness flags the codebase can't satisfy yet (`"strict": false`, `"noUnusedLocals": false`, …) with a comment; remove the overrides as the code is tightened.
+Extend the base and explicitly override the strictness flags the codebase can't satisfy yet
+(`"strict": false`, `"noUnusedLocals": false`, …) with a comment; remove the overrides as the code
+is tightened.

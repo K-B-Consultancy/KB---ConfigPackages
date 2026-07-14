@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: read
-  packages: write
+  id-token: write
 
 jobs:
   publish:
@@ -26,7 +26,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24
-          registry-url: https://npm.pkg.github.com
+          registry-url: https://registry.npmjs.org
           cache: pnpm
 
       - name: Install dependencies
@@ -50,16 +50,5 @@ jobs:
       - name: Verify
         run: pnpm lint && pnpm test && pnpm build
 
-      # A "[WARN] Skipped OIDC: ..." line in this step is expected and harmless.
-      # pnpm always attempts npmjs-style OIDC trusted publishing when it detects
-      # GitHub Actions, but GitHub Packages doesn't implement the token-exchange
-      # endpoint, so the attempt can never succeed here:
-      #   - without `id-token: write` → "Incorrect permissions for idToken" warning
-      #   - with `id-token: write`    → a different warning from the failed exchange
-      # pnpm 11 has no setting to disable the attempt (verified in pnpm source);
-      # it falls back to NODE_AUTH_TOKEN and publishes normally. Don't re-add the
-      # id-token permission to chase the warning — it only changes the message.
       - name: Publish packages
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm -r --filter "@k-b-consultancy/*" publish --no-git-checks
+        run: pnpm -r --filter "@k-b-consultancy/*" publish --no-git-checks --access public
