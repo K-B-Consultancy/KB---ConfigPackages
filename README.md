@@ -17,7 +17,7 @@ registry auth — no `.npmrc` or token setup needed to install them. Quick refer
 
 ```js
 import kbBase from '@k-b-consultancy/eslint-config';
-// or: @k-b-consultancy/eslint-config/nextjs · @k-b-consultancy/eslint-config/tanstack-start
+// or: @k-b-consultancy/eslint-config/nextjs · /tanstack-start · /react-native
 
 export default [...kbBase];
 ```
@@ -33,6 +33,7 @@ export { default } from '@k-b-consultancy/prettier-config';
 ```json
 {
   "extends": "@k-b-consultancy/tsconfig/base.json"
+  // or: /nextjs.json · /tanstack-start.json · /react-native.json
 }
 ```
 

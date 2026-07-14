@@ -1,6 +1,6 @@
 {
   "name": "@k-b-consultancy/eslint-config",
-  "version": "1.2.6",
+  "version": "1.3.0",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -17,7 +17,8 @@
     "./local-rules/no-direct-query-in-components": "./src/local-rules/no-direct-query-in-components.js",
     "./local-rules/allow-underscore-type-only-imports": "./src/local-rules/allow-underscore-type-only-imports.js",
     "./nextjs": "./src/nextjs.js",
-    "./tanstack-start": "./src/tanstack-start.js"
+    "./tanstack-start": "./src/tanstack-start.js",
+    "./react-native": "./src/react-native.js"
   },
   "files": [
     "src"
@@ -27,12 +28,14 @@
     "test": "node --test"
   },
   "dependencies": {
-    "typescript-eslint": "^8.63.0",
-    "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-jsx-a11y": "^6.10.2",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-import-x": "^4.17.1",
-    "eslint-plugin-react-refresh": "^0.5.3"
+    "typescript-eslint": "8.63.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "eslint-plugin-jsx-a11y": "6.10.2",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-import-x": "4.17.1",
+    "eslint-plugin-react-refresh": "0.5.3",
+    "@react-native/eslint-plugin": "0.86.0",
+    "eslint-plugin-react-native": "5.0.0"
   },
   "peerDependencies": {
     "eslint": ">=9.0.0"
