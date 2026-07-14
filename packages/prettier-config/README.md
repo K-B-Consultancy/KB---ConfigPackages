@@ -14,7 +14,7 @@ pnpm add -D @k-b-consultancy/prettier-config prettier
 
 ```js
 // prettier.config.js
-export {default} from '@k-b-consultancy/prettier-config';
+export { default } from '@k-b-consultancy/prettier-config';
 ```
 
 Delete any `.prettierrc*` files — one config source only.
