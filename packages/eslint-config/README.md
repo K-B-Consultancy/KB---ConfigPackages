@@ -6,13 +6,17 @@ here, never per project.
 
 ## Install
 
-Published on the public npm registry — no registry setup or auth needed. Exact-pinned:
+Published on the public npm registry — no registry setup or auth needed. The plugins it needs
+(`typescript-eslint`, `eslint-plugin-react-hooks`, `eslint-plugin-import-x`, `eslint-plugin-jsx-a11y`,
+`eslint-config-prettier`, `eslint-plugin-react-refresh`) ship as direct dependencies of this package,
+so you don't need to list them yourself. Only `eslint` itself is a peer — install that alongside:
 
 ```sh
-pnpm add -D @k-b-consultancy/eslint-config \
-  eslint typescript-eslint eslint-plugin-react-hooks \
-  eslint-plugin-import-x eslint-plugin-jsx-a11y eslint-config-prettier
+pnpm add -D @k-b-consultancy/eslint-config eslint
 ```
+
+You can still add any of the bundled plugins to your own `devDependencies` if you need to pin a
+different version — your app's copy wins the same way any other npm dependency resolution does.
 
 ## Use
 
@@ -43,7 +47,7 @@ export default [
 
 ### TanStack Start
 
-Also install the optional peer `eslint-plugin-react-refresh`:
+`eslint-plugin-react-refresh` ships bundled — nothing extra to install:
 
 ```js
 // eslint.config.js

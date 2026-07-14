@@ -16,7 +16,7 @@ pnpm add -D @k-b-consultancy/stylelint-config stylelint
 
 ```js
 // stylelint.config.mjs
-export {default} from '@k-b-consultancy/stylelint-config';
+export { default } from '@k-b-consultancy/stylelint-config';
 ```
 
 Tailwind-only projects (the org default) usually don't need Stylelint at all — add it when a project

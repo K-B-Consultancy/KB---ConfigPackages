@@ -59,7 +59,7 @@ export default [
       'no-console': 'error',
       // Same intent as import/no-default-export, but via the ESLint core rule —
       // the plugin rule reads context.parserOptions, which ESLint 10 removed
-      'no-restricted-exports': ['error', {restrictDefaultExports: {direct: true}}],
+      'no-restricted-exports': ['error', { restrictDefaultExports: { direct: true } }],
       // One bucket, purely alphabetical — no group separation or blank lines.
       // Side-effect-only imports (import "./x.css") are never reordered by this rule.
       'import-x/order': [
@@ -69,7 +69,7 @@ export default [
             ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'unknown']
           ],
           'newlines-between': 'never',
-          alphabetize: {order: 'asc', caseInsensitive: true}
+          alphabetize: { order: 'asc', caseInsensitive: true }
         }
       ],
       // Feature isolation: cross-feature imports go through the feature's
@@ -92,14 +92,14 @@ export default [
     // Component files ≤ 200 lines — split components, don't restructure to dodge the cap
     files: ['**/*.tsx'],
     rules: {
-      'max-lines': ['error', {max: 200, skipBlankLines: true, skipComments: true}]
+      'max-lines': ['error', { max: 200, skipBlankLines: true, skipComments: true }]
     }
   },
   {
     // Hook files ≤ 100 lines (use[A-Z] so api modules like users.ts don't match)
     files: ['**/use[A-Z]*.ts'],
     rules: {
-      'max-lines': ['error', {max: 100, skipBlankLines: true, skipComments: true}]
+      'max-lines': ['error', { max: 100, skipBlankLines: true, skipComments: true }]
     }
   },
   {

@@ -25,7 +25,7 @@ export default [...kbBase];
 ### Prettier
 
 ```js
-export {default} from '@k-b-consultancy/prettier-config';
+export { default } from '@k-b-consultancy/prettier-config';
 ```
 
 ### TypeScript
