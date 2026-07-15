@@ -62,7 +62,6 @@ export default [
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-non-null-assertion': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
-      'no-restricted-exports': ['error', { restrictDefaultExports: { direct: true } }],
       // One bucket, purely alphabetical — no group separation or blank lines.
       // Side-effect-only imports (import "./x.css") are never reordered by this rule.
       'import-x/order': [
@@ -114,14 +113,6 @@ export default [
     files: ['**/use[A-Z]*.ts'],
     rules: {
       'max-lines': ['error', { max: 200, skipBlankLines: true, skipComments: true }]
-    }
-  },
-  {
-    // Config files, RN's own entry point, and Expo Router route files are consumed
-    // by tools that expect a default export
-    files: ['**/*.config.{ts,js,mjs,cjs}', 'index.js', 'App.tsx', '**/app/**/{_layout,index}.tsx'],
-    rules: {
-      'no-restricted-exports': 'off'
     }
   },
   eslintConfigPrettier

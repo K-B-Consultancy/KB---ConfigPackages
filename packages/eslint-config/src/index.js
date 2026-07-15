@@ -60,9 +60,6 @@ export default [
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-non-null-assertion': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
-      // Same intent as import/no-default-export, but via the ESLint core rule —
-      // the plugin rule reads context.parserOptions, which ESLint 10 removed
-      'no-restricted-exports': ['error', { restrictDefaultExports: { direct: true } }],
       // One bucket, purely alphabetical — no group separation or blank lines.
       // Side-effect-only imports (import "./x.css") are never reordered by this rule.
       'import-x/order': [
