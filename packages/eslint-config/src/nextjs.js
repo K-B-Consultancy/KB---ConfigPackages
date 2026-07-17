@@ -63,7 +63,6 @@ export default [
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-non-null-assertion': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
-      'no-restricted-exports': ['error', { restrictDefaultExports: { direct: true } }],
       // One bucket, purely alphabetical — no group separation or blank lines.
       // Side-effect-only imports (import "./x.css") are never reordered by this rule.
       'import-x/order': [
@@ -104,26 +103,6 @@ export default [
     files: ['**/use[A-Z]*.ts'],
     rules: {
       'max-lines': ['error', { max: 200, skipBlankLines: true, skipComments: true }]
-    }
-  },
-  {
-    // Config files are consumed by tools that expect a default export
-    files: ['**/*.config.{ts,js,mjs,cjs}', '**/vite.config.ts', '**/playwright.config.ts'],
-    rules: {
-      'no-restricted-exports': 'off'
-    }
-  },
-  {
-    // Next.js framework files are consumed by the framework via default exports
-    files: [
-      '**/app/**/{page,layout,template,loading,error,not-found,global-error,default,route}.{ts,tsx}',
-      '**/app/**/{sitemap,robots,manifest,icon,apple-icon,opengraph-image,twitter-image}.{ts,tsx}',
-      '**/middleware.ts',
-      '**/instrumentation.ts',
-      '**/mdx-components.tsx'
-    ],
-    rules: {
-      'no-restricted-exports': 'off'
     }
   },
   eslintConfigPrettier

@@ -138,60 +138,30 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4.1.7
-        with:
-          fetch-depth: 0
-
-      - name: Get current version
-        id: version
-        uses: actions/github-script@v9.0.0
-        with:
-          script: |
-            // Parse package.json version
-            const fs = require('fs');
-            const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-            const [major, minor, patch] = packageJson.version.split('.').map(Number);
-
-            // Bump patch version
-            const newVersion = `${major}.${minor}.${patch + 1}`;
-            core.setOutput('new-version', newVersion);
-            console.log(`Version bump: ${packageJson.version} -> ${newVersion}`);
-
-      - name: Create release
+      # release-drafter.yml already bumped and committed package.json to match the
+      # draft on every dependency PR merge — this job just has to flip the existing
+      # draft to published, it has nothing left to compute.
+      - name: Publish the existing draft release
         uses: actions/github-script@v9.0.0
         with:
           script: |
             const { owner, repo } = context.repo;
-            const tag = `v${{ steps.version.outputs.new-version }}`;
-            const sha = context.sha;
+            const releases = await github.rest.repos.listReleases({ owner, repo, per_page: 1 });
+            const draft = releases.data.find(r => r.draft);
 
-            // Get release draft to use its content
-            let releaseBody = '## Dependencies Updated\n\nThis patch release includes dependency updates only.';
-            try {
-              const releases = await github.rest.repos.listReleases({
-                owner,
-                repo,
-                per_page: 1
-              });
-
-              // Find draft release
-              if (releases.data.length > 0 && releases.data[0].draft) {
-                releaseBody = releases.data[0].body || releaseBody;
-              }
-            } catch (error) {
-              console.log('Could not fetch draft release');
+            if (!draft) {
+              core.setFailed(
+                'No draft release found to publish — release-drafter.yml should have created ' +
+                  'one on push to main.'
+              );
+              return;
             }
 
-            const release = await github.rest.repos.createRelease({
+            const release = await github.rest.repos.updateRelease({
               owner,
               repo,
-              tag_name: tag,
-              target_commitish: sha,
-              name: tag,
-              body: releaseBody,
-              draft: false,
-              prerelease: false
+              release_id: draft.id,
+              draft: false
             });
 
-            console.log(`✅ Release ${tag} created at ${release.data.html_url}`);
+            console.log(`✅ Published ${release.data.tag_name} at ${release.data.html_url}`);

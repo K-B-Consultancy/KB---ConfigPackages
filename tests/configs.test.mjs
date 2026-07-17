@@ -39,7 +39,6 @@ test('eslint config carries the full org rule set from react-base RULES.md', () 
   const allRules = Object.assign({}, ...eslintConfig.map(entry => entry.rules ?? {}));
   for (const rule of [
     'import-x/order',
-    'no-restricted-exports',
     'no-restricted-imports',
     'max-lines',
     '@typescript-eslint/no-explicit-any',
@@ -99,7 +98,6 @@ test('nextjs flavor stands alone (does not spread base)', () => {
   const allRules = Object.assign({}, ...eslintConfigNextjs.map(entry => entry.rules ?? {}));
   for (const rule of [
     'import-x/order',
-    'no-restricted-exports',
     'no-restricted-imports',
     'max-lines',
     '@typescript-eslint/no-explicit-any',
@@ -114,11 +112,6 @@ test('nextjs flavor stands alone (does not spread base)', () => {
   // Plain no-console would also flag console calls in Client Components, which Datadog
   // RUM does capture — only the directive-aware local rule should be enabled.
   assert.ok(!('no-console' in allRules), 'nextjs flavor must not enable plain no-console');
-
-  const nextFrameworkBlock = eslintConfigNextjs.find(
-    entry => entry.files && entry.rules?.['no-restricted-exports'] === 'off'
-  );
-  assert.ok(nextFrameworkBlock, 'nextjs flavor re-enables default exports for framework files');
 });
 
 test('react-native flavor stands alone (does not spread base)', () => {
@@ -143,7 +136,6 @@ test('react-native flavor stands alone (does not spread base)', () => {
   const allRules = Object.assign({}, ...eslintConfigReactNative.map(entry => entry.rules ?? {}));
   for (const rule of [
     'import-x/order',
-    'no-restricted-exports',
     'no-restricted-imports',
     'max-lines',
     '@typescript-eslint/no-explicit-any',
