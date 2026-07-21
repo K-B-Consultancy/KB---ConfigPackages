@@ -101,13 +101,29 @@ export default [
 ];
 ```
 
+RN-specific rules on top of the base set:
+
+- `no-restricted-imports` also bans `axios` outside the api layer (`**/api/**`) — the HTTP client,
+  with its Bearer-auth and token-refresh interceptors, is constructed in one place and imported from
+  there; and bans `react-native-vector-icons` in favor of `@expo/vector-icons` (Expo doesn't bundle
+  the former's fonts).
+- `@typescript-eslint/no-require-imports` is **off** for `metro.config.js`, `plugins/**`, and
+  `jest-setup/**` — CJS Node tooling that runs outside any bundler and must use `require()`.
+- `import-x/namespace`, `import-x/default`, `import-x/no-named-as-default`, and
+  `import-x/no-named-as-default-member` are **off**: import-x's static resolver crashes trying to
+  parse react-native's Flow-syntax entry point. Same reason `no-unresolved`/`named` are off — tsc
+  owns resolution.
+
 ## What it enforces (intent, not the full list — read `src/`)
 
 - `local/no-direct-query-in-components` — hooks own all data-fetching
 - `max-lines` (300 for `.tsx`, 200 for `use[A-Z]*.ts`) — split components, extract hooks
-- `console.*` — allowed everywhere Datadog RUM can see it (base, React Native, and Client
-  Components); the Next.js and TanStack Start flavors still forbid it on the server, where RUM's
-  console forwarding doesn't reach
+- `console.*` — not linted where Datadog RUM forwards browser console (base and Client Components);
+  the Next.js and TanStack Start flavors still forbid it on the server, where RUM's console
+  forwarding doesn't reach. React Native is likewise unlinted, but its stack rules require routing
+  output through the `logger` module — native `console` is **not** forwarded to Datadog Mobile RUM,
+  so a bare `console.log` in a release build goes nowhere (see react-native/RULES.md § Logging &
+  monitoring)
 - `no-restricted-exports` (default exports) — named exports everywhere; stack flavors re-enable
   defaults only where the framework requires them
 - `no-restricted-imports` on `@/features/*/*` — cross-feature imports go through the feature's
