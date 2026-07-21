@@ -19,7 +19,7 @@
     "build": "pnpm -r --if-present build"
   },
   "devDependencies": {
-    "@eslint/js": "9.31.0",
+    "@eslint/js": "9.39.5",
     "@k-b-consultancy/prettier-config": "workspace:*",
     "eslint": "9.39.5",
     "prettier": "3.9.5",
