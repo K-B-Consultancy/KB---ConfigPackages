@@ -58,10 +58,10 @@ jobs:
             const otherLabels = labelNames.filter(l => l !== 'dependencies');
             for (const label of otherLabels) {
               console.log(`Removing label: ${label}`);
-              await github.rest.issues.removeLabel({
+              await github.rest.pulls.removeLabel({
                 owner,
                 repo,
-                issue_number: number,
+                pull_number: number,
                 name: label
               });
             }
