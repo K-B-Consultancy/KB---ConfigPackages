@@ -30,7 +30,6 @@ concurrency:
 
 jobs:
   automerge:
-    if: github.event.pull_request.user.login == 'dependabot[bot]' || github.event.pull_request.user.login == 'dependabot'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -41,17 +40,40 @@ jobs:
         uses: actions/checkout@v7.0.1
 
       - name: Ensure dependencies label only
+        id: gate
         uses: actions/github-script@v9.0.0
         with:
           script: |
-            const { owner, repo, number } = context.issue;
-            const labels = context.payload.pull_request?.labels || [];
-            const labelNames = labels.map(l => l.name);
+            const { owner, repo } = context.repo;
+            const number =
+              context.payload.pull_request?.number ??
+              context.payload.workflow_run?.pull_requests?.[0]?.number ??
+              context.payload.check_suite?.pull_requests?.[0]?.number;
 
-            // Check if it has the dependencies label
+            if (!number) {
+              core.setOutput('should_run', 'false');
+              console.log('No pull request number found in event payload. Skipping automerge.');
+              return;
+            }
+
+            const pr = await github.rest.pulls.get({
+              owner,
+              repo,
+              pull_number: number
+            });
+
+            const prAuthor = pr.data.user?.login;
+            if (prAuthor !== 'dependabot[bot]' && prAuthor !== 'dependabot') {
+              core.setOutput('should_run', 'false');
+              console.log(`PR author is ${prAuthor}. Skipping automerge.`);
+              return;
+            }
+
+            const labelNames = (pr.data.labels || []).map(l => l.name);
             if (!labelNames.includes('dependencies')) {
+              core.setOutput('should_run', 'false');
               console.log('PR does not have the "dependencies" label. Skipping automerge.');
-              process.exit(0);
+              return;
             }
 
             // Remove any other labels
@@ -66,16 +88,22 @@ jobs:
               });
             }
 
+            core.setOutput('should_run', 'true');
+            core.setOutput('pr_number', `${number}`);
+
       - name: Get PR details
         id: pr
+        if: steps.gate.outputs.should_run == 'true'
         uses: actions/github-script@v9.0.0
+        env:
+          PR_NUMBER: ${{ steps.gate.outputs.pr_number }}
         with:
           script: |
-            const { owner, repo, number } = context.issue;
+            const { owner, repo } = context.repo;
             const pr = await github.rest.pulls.get({
               owner,
               repo,
-              pull_number: number
+              pull_number: Number(process.env.PR_NUMBER)
             });
 
             // Extract version numbers from PR title (e.g., "Bump package from 1.0.0 to 2.0.0")
@@ -121,17 +149,19 @@ jobs:
             core.setOutput('is_draft', pr.data.draft.toString());
 
       - name: Auto-merge if conditions are met
-        if: steps.pr.outputs.state == 'success' && steps.pr.outputs.is_draft == 'false' && steps.pr.outputs.is_major == 'false'
+        if: steps.gate.outputs.should_run == 'true' && steps.pr.outputs.state == 'success' && steps.pr.outputs.is_draft == 'false' && steps.pr.outputs.is_major == 'false'
         uses: actions/github-script@v9.0.0
+        env:
+          PR_NUMBER: ${{ steps.gate.outputs.pr_number }}
         with:
           script: |
-            const { owner, repo, number } = context.issue;
+            const { owner, repo } = context.repo;
 
             try {
               const result = await github.rest.pulls.merge({
                 owner,
                 repo,
-                pull_number: number,
+                pull_number: Number(process.env.PR_NUMBER),
                 merge_method: 'squash'
               });
               console.log('✅ PR auto-merged successfully');
