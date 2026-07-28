@@ -27,8 +27,8 @@ importers:
   packages/eslint-config:
     dependencies:
       '@react-native/eslint-plugin':
-        specifier: 0.86.0
-        version: 0.86.0
+        specifier: 0.86.2
+        version: 0.86.2
       eslint-config-next:
         specifier: 16.2.12
         version: 16.2.12(@typescript-eslint/parser@8.64.0(eslint@9.39.5)(typescript@6.0.3))(eslint-plugin-import-x@4.17.1(@typescript-eslint/utils@8.64.0(eslint@9.39.5)(typescript@6.0.3))(eslint-import-resolver-node@0.3.10)(eslint@9.39.5))(eslint@9.39.5)(typescript@6.0.3)
@@ -241,8 +241,8 @@ packages:
     resolution: {integrity: sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==}
     engines: {node: '>=12.4.0'}
 
-  '@react-native/eslint-plugin@0.86.0':
-    resolution: {integrity: sha512-v0zZAO9tfB72RdluTGHZcYDe5fIH6hf/bk8jATTCdwNNWcvPEjHdzuA2O6M4OAEmC+UDq/kURb+LY5f2fGGRGg==}
+  '@react-native/eslint-plugin@0.86.2':
+    resolution: {integrity: sha512-Z2NdVQg8O+PIvzD4lsB00Irk/OMW9qqR+wCdt6WM0tuiFKnh00qX8ptKPkogSSx9ymXLqLNdpZ9Z0f6j+uzIRw==}
     engines: {node: ^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0}
 
   '@rtsao/scc@1.1.0':
@@ -1797,7 +1797,7 @@ snapshots:
 
   '@nolyfill/is-core-module@1.0.39': {}
 
-  '@react-native/eslint-plugin@0.86.0': {}
+  '@react-native/eslint-plugin@0.86.2': {}
 
   '@rtsao/scc@1.1.0': {}
 
