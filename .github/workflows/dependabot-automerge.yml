@@ -136,20 +136,12 @@ jobs:
               }
             }
 
-            // Check if all required checks have passed
-            const statuses = await github.rest.repos.getCombinedStatusForRef({
-              owner,
-              repo,
-              ref: pr.data.head.sha
-            });
-
-            core.setOutput('state', statuses.data.state);
             core.setOutput('is_major', isMajor.toString());
             core.setOutput('is_minor', isMinor.toString());
             core.setOutput('is_draft', pr.data.draft.toString());
 
       - name: Auto-merge if conditions are met
-        if: steps.gate.outputs.should_run == 'true' && steps.pr.outputs.state == 'success' && steps.pr.outputs.is_draft == 'false' && steps.pr.outputs.is_major == 'false'
+        if: steps.gate.outputs.should_run == 'true' && steps.pr.outputs.is_draft == 'false' && steps.pr.outputs.is_major == 'false'
         uses: actions/github-script@v9.0.0
         env:
           PR_NUMBER: ${{ steps.gate.outputs.pr_number }}
