@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: read
-  id-token: write
+  packages: write
 
 jobs:
   publish:
@@ -26,7 +26,8 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 24
-          registry-url: https://registry.npmjs.org
+          registry-url: https://npm.pkg.github.com
+          scope: "@k-b-consultancy"
           cache: pnpm
 
       - name: Install dependencies
@@ -51,4 +52,6 @@ jobs:
         run: pnpm lint && pnpm test && pnpm build
 
       - name: Publish packages
-        run: pnpm -r --filter "@k-b-consultancy/*" publish --no-git-checks --access public
+        run: pnpm -r --filter "@k-b-consultancy/*" publish --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
