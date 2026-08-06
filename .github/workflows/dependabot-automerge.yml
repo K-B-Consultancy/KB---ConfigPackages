@@ -20,9 +20,8 @@ on:
     types:
       - completed
 
-permissions:
-  contents: write
-  pull-requests: write
+# No workflow-level permissions — the job declares exactly what it needs.
+permissions: {}
 
 concurrency:
   group: ${{ github.repository }}-automerge-${{ github.event.pull_request.number || github.ref }}
@@ -37,11 +36,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Ensure dependencies label only
         id: gate
-        uses: actions/github-script@v9.0.0
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             const { owner, repo } = context.repo;
@@ -94,7 +95,7 @@ jobs:
       - name: Get PR details
         id: pr
         if: steps.gate.outputs.should_run == 'true'
-        uses: actions/github-script@v9.0.0
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
           PR_NUMBER: ${{ steps.gate.outputs.pr_number }}
         with:
@@ -142,7 +143,7 @@ jobs:
 
       - name: Auto-merge if conditions are met
         if: steps.gate.outputs.should_run == 'true' && steps.pr.outputs.is_draft == 'false' && steps.pr.outputs.is_major == 'false'
-        uses: actions/github-script@v9.0.0
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
           PR_NUMBER: ${{ steps.gate.outputs.pr_number }}
         with:

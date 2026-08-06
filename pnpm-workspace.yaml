@@ -3,5 +3,8 @@ packages:
 allowBuilds:
   # unrs-resolver ships prebuilt binaries; its postinstall build fallback is not needed
   unrs-resolver: false
+# Never install a dependency version younger than 3 days (minutes) — compromised
+# releases are usually yanked within hours. Matches Dependabot's cooldown.default-days.
+minimumReleaseAge: 4320
 minimumReleaseAgeExclude:
   - '@k-b-consultancy/prettier-config@1.2.2'

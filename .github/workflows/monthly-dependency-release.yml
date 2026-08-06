@@ -6,9 +6,8 @@ on:
     - cron: '0 6 1 * *'
   workflow_dispatch:
 
-permissions:
-  contents: write
-  pull-requests: read
+# No workflow-level permissions — each job declares exactly what it needs.
+permissions: {}
 
 concurrency:
   group: ${{ github.repository }}-monthly-dependency-release
@@ -25,13 +24,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Check if there are dependency-only changes since last release
         id: check
-        uses: actions/github-script@v9.0.0
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             const { owner, repo } = context.repo;
@@ -142,7 +142,7 @@ jobs:
       # draft on every dependency PR merge — this job just has to flip the existing
       # draft to published, it has nothing left to compute.
       - name: Publish the existing draft release
-        uses: actions/github-script@v9.0.0
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             const { owner, repo } = context.repo;
