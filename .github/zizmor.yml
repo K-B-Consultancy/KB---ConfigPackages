@@ -11,3 +11,9 @@ rules:
       # workflow_run is gated hard in the first step: PR author must be
       # dependabot[bot] and the PR must carry only the `dependencies` label.
       - dependabot-automerge.yml
+  adhoc-packages:
+    ignore:
+      # The publish job deliberately has no lockfile (it never checks out the
+      # repo); the one install is npm itself, exact-pinned, from the official
+      # registry, to get `npm stage publish` support.
+      - publish.yml

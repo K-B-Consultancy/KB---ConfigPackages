@@ -57,10 +57,11 @@ All packages are versioned in **lockstep** with the root `package.json` — ever
 4. Publish the release from the GitHub UI. `publish.yml` verifies the tag matches every
    `package.json` version (it fails the publish otherwise — though step 3 already guarantees a
    match), builds the tarballs in a job with read-only permissions, and **stages** them on npm
-   (`npm stage publish`) via trusted publishing. Already-published versions are skipped, so
-   re-runs are safe.
-5. Approve the staged versions with 2FA on npmjs.com under *Staged Packages* (or `npm stage approve`).
-   Nothing is live on the registry until this step. Optionally diff the staged tarball first.
+   (`npm stage publish`) via trusted publishing. Already-published versions are skipped, so re-runs
+   are safe.
+5. Approve the staged versions with 2FA on npmjs.com under _Staged Packages_ (or
+   `npm stage approve`). Nothing is live on the registry until this step. Optionally diff the staged
+   tarball first.
 
 Dependency-only PRs still go through steps 2–3 on every merge, so the draft and `package.json` stay
 current all month. `monthly-dependency-release.yml` just checks whether everything merged since the
@@ -69,7 +70,8 @@ staged-package approval (step 5) is still manual, by design.
 
 ### Release security
 
-The release path follows [Evil Martians' secure npm release setup](https://evilmartians.com/chronicles/the-secure-way-to-release-an-npm-package):
+The release path follows
+[Evil Martians' secure npm release setup](https://evilmartians.com/chronicles/the-secure-way-to-release-an-npm-package):
 no npm tokens anywhere (OIDC trusted publishing only), build and publish split into separate jobs
 (the publish job never installs dependencies or checks out the repo), all actions pinned to commit
 SHAs (Dependabot updates the pins), `--ignore-scripts` on every install, no dependency cache in the
@@ -80,8 +82,8 @@ Settings this depends on (registry/repo side, not in this repo's files; verify w
 release flow):
 
 - **npmjs.com, per package:** Trusted Publisher = this repo + `publish.yml`, restricted to
-  **staged** publishing; Publishing access = *Require two-factor authentication and disallow
-  tokens*; no granular/classic tokens issued.
+  **staged** publishing; Publishing access = _Require two-factor authentication and disallow
+  tokens_; no granular/classic tokens issued.
 - **GitHub org:** 2FA required for all members.
 - **GitHub repo:** tag ruleset restricting tag creation to admins (releases create the tags that
   trigger publishing).
