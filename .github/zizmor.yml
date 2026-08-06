@@ -1,0 +1,13 @@
+# zizmor (workflow security linter) config — run by the workflow-lint job in
+# pr-checks.yml. Each ignore below is a deliberate, reviewed exception.
+rules:
+  artipacked:
+    ignore:
+      # bump-versions pushes the version commit to main with the checkout
+      # credential — persist-credentials is required there by design.
+      - release-drafter.yml
+  dangerous-triggers:
+    ignore:
+      # workflow_run is gated hard in the first step: PR author must be
+      # dependabot[bot] and the PR must carry only the `dependencies` label.
+      - dependabot-automerge.yml

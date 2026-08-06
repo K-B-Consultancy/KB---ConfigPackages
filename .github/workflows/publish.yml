@@ -7,30 +7,37 @@ on:
 
 permissions:
   contents: read
-  id-token: write
 
 jobs:
-  publish:
+  # Build and publish are separate jobs on purpose: the build job is the only one
+  # that installs dependencies, so a compromised (dev)dependency's lifecycle
+  # scripts can never run in the same job that holds the OIDC publish credential.
+  build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
           version: 11.5.2
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24
-          registry-url: https://registry.npmjs.org
-          cache: pnpm
+          # No dependency cache anywhere in the release path — a poisoned cache
+          # entry would end up inside the published tarballs.
+          package-manager-cache: false
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       # Packages are versioned in lockstep with the root package.json. A release
       # whose tag doesn't match would publish artifacts that can't be traced back
@@ -50,5 +57,61 @@ jobs:
       - name: Verify
         run: pnpm lint && pnpm test && pnpm build
 
-      - name: Publish packages
-        run: pnpm -r --filter "@k-b-consultancy/*" publish --no-git-checks --access public
+      - name: Pack tarballs
+        run: |
+          mkdir -p tarballs
+          for d in packages/*; do
+            (cd "$d" && pnpm pack --pack-destination "$GITHUB_WORKSPACE/tarballs")
+          done
+          ls -l tarballs
+
+      - name: Upload tarballs
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: tarballs
+          path: tarballs/*.tgz
+          if-no-files-found: error
+
+  # This job never checks out the repo and never installs dependencies — it only
+  # sees the tarballs the build job produced. Auth is npm trusted publishing
+  # (OIDC): no npm token exists anywhere in this repo's settings.
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # OIDC token exchange for npm trusted publishing
+
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      # `npm stage publish` needs npm >= 11.15.0; Node 24's bundled npm may lag.
+      - name: Update npm
+        run: npm install -g npm@latest
+
+      - name: Download tarballs
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: tarballs
+          path: tarballs
+
+      # Stages each package instead of publishing it live — a maintainer approves
+      # with 2FA under npmjs.com → Staged Packages (or `npm stage approve`).
+      # Already-published versions are skipped, so re-runs stay safe.
+      - name: Stage packages for publishing
+        run: |
+          for t in tarballs/*.tgz; do
+            NAME="$(tar -xzOf "$t" package/package.json | node -p 'JSON.parse(require("fs").readFileSync(0, "utf8")).name')"
+            VERSION="$(tar -xzOf "$t" package/package.json | node -p 'JSON.parse(require("fs").readFileSync(0, "utf8")).version')"
+            if npm view "${NAME}@${VERSION}" version >/dev/null 2>&1; then
+              echo "${NAME}@${VERSION} already published — skipping"
+              continue
+            fi
+            echo "Staging ${NAME}@${VERSION}"
+            npm stage publish "$t" --ignore-scripts
+          done
