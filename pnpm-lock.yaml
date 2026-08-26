@@ -27,8 +27,8 @@ importers:
   packages/eslint-config:
     dependencies:
       '@react-native/eslint-plugin':
-        specifier: 0.86.2
-        version: 0.86.2
+        specifier: 0.87.0
+        version: 0.87.0
       eslint-config-next:
         specifier: 16.3.1
         version: 16.3.1(@typescript-eslint/parser@8.65.0(eslint@9.39.5)(typescript@6.0.3))(eslint-plugin-import-x@4.17.1(@typescript-eslint/utils@8.65.0(eslint@9.39.5)(typescript@6.0.3))(eslint-import-resolver-node@0.3.10)(eslint@9.39.5))(eslint@9.39.5)(typescript@6.0.3)
@@ -247,9 +247,9 @@ packages:
     resolution: {integrity: sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==}
     engines: {node: '>=12.4.0'}
 
-  '@react-native/eslint-plugin@0.86.2':
-    resolution: {integrity: sha512-Z2NdVQg8O+PIvzD4lsB00Irk/OMW9qqR+wCdt6WM0tuiFKnh00qX8ptKPkogSSx9ymXLqLNdpZ9Z0f6j+uzIRw==}
-    engines: {node: ^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0}
+  '@react-native/eslint-plugin@0.87.0':
+    resolution: {integrity: sha512-q6kuDQFIF8BwzGe/IGJj8n9c61TxGBE+NVOChCSCC8b49T1nJ8nLmUAn9z29abOQLk+DLjqxSo1LQASgqPtD+w==}
+    engines: {node: ^22.13.0 || ^24.3.0 || >= 26.0.0}
 
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
@@ -835,6 +835,7 @@ packages:
   eslint@9.39.5:
     resolution: {integrity: sha512-DgZS62aPLXKlnxILS/AYCoRvHaZeXceIzlXPkkGGzJWSow1aEk0lbTlxUSlyjC8jcaKxAdOnTDz+o1JFSBsyjw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -1822,7 +1823,7 @@ snapshots:
 
   '@nolyfill/is-core-module@1.0.39': {}
 
-  '@react-native/eslint-plugin@0.86.2': {}
+  '@react-native/eslint-plugin@0.87.0': {}
 
   '@rtsao/scc@1.1.0': {}
 
