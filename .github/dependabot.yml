@@ -1,12 +1,17 @@
+# Weekly on Monday (Europe/Madrid), releases at least 3 days old only (cooldown). Each ecosystem opens a
+# `minor-and-patch` PR that auto-merges once CI passes and a `major` PR that waits for a person.
+# Security updates ignore all of this. Policy: .ai-docs/00-org-wide/DEPENDENCIES.md § Dependabot.
 version: 2
 updates:
+
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "03:00"
-    open-pull-requests-limit: 5
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Europe/Madrid
+    open-pull-requests-limit: 2
     labels:
       - "dependencies"
     commit-message:
@@ -14,14 +19,27 @@ updates:
       include: "scope"
     cooldown:
       default-days: 3
+    groups:
+      minor-and-patch:
+        patterns:
+          - '*'
+        update-types:
+          - minor
+          - patch
+      major:
+        patterns:
+          - '*'
+        update-types:
+          - major
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "friday"
-      time: "03:00"
-    open-pull-requests-limit: 5
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Europe/Madrid
+    open-pull-requests-limit: 2
     labels:
       - "dependencies"
     commit-message:
@@ -29,3 +47,15 @@ updates:
       include: "scope"
     cooldown:
       default-days: 3
+    groups:
+      minor-and-patch:
+        patterns:
+          - '*'
+        update-types:
+          - minor
+          - patch
+      major:
+        patterns:
+          - '*'
+        update-types:
+          - major
