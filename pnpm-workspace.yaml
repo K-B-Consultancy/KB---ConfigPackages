@@ -3,8 +3,6 @@ packages:
 allowBuilds:
   # unrs-resolver ships prebuilt binaries; its postinstall build fallback is not needed
   unrs-resolver: false
-# Never install a dependency version younger than 3 days (minutes) — compromised
-# releases are usually yanked within hours. Matches Dependabot's cooldown.default-days.
-minimumReleaseAge: 4320
-minimumReleaseAgeExclude:
-  - '@k-b-consultancy/prettier-config@1.2.2'
+# No package age gate in pnpm: .ai-docs/00-org-wide/DEPENDENCIES.md § Supply chain guardrails says why.
+# It is 0 rather than removed because pnpm 11 applies a 1-day gate when the setting is missing.
+minimumReleaseAge: 0
