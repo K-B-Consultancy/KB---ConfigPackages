@@ -31,6 +31,7 @@ jobs:
   automerge:
     runs-on: ubuntu-latest
     permissions:
+      checks: read
       contents: write
       pull-requests: write
 
@@ -107,6 +108,17 @@ jobs:
               pull_number: Number(process.env.PR_NUMBER)
             });
 
+            // No branch rule requires checks in this repo, so pulls.merge would merge while CI is
+            // still running. Merge only once `verify` has passed; the workflow_run trigger runs
+            // this again when PR Checks completes.
+            const runs = await github.paginate(github.rest.checks.listForRef, {
+              owner,
+              repo,
+              ref: pr.data.head.sha,
+              per_page: 100
+            });
+            const ciGreen = runs.some(r => r.name === 'verify' && r.conclusion === 'success');
+
             // Extract version numbers from PR title (e.g., "Bump package from 1.0.0 to 2.0.0")
             const titleMatch = pr.data.title.match(/from\s+([^\s]+)\s+to\s+([^\s]+)/i);
             let isMajor = false;
@@ -140,9 +152,10 @@ jobs:
             core.setOutput('is_major', isMajor.toString());
             core.setOutput('is_minor', isMinor.toString());
             core.setOutput('is_draft', pr.data.draft.toString());
+            core.setOutput('ci_green', ciGreen.toString());
 
       - name: Auto-merge if conditions are met
-        if: steps.gate.outputs.should_run == 'true' && steps.pr.outputs.is_draft == 'false' && steps.pr.outputs.is_major == 'false'
+        if: steps.gate.outputs.should_run == 'true' && steps.pr.outputs.is_draft == 'false' && steps.pr.outputs.is_major == 'false' && steps.pr.outputs.ci_green == 'true'
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
           PR_NUMBER: ${{ steps.gate.outputs.pr_number }}
